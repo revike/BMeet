@@ -16,10 +16,6 @@ class User(AbstractUser):
         default=False, verbose_name='верифицирован'
     )
 
-    is_active = models.BooleanField(
-        default=False, verbose_name='активен'
-    )
-
     def __str__(self):
         return f'{self.username} - {self.email}'
 
