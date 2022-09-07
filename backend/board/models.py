@@ -13,7 +13,6 @@ class Board(models.Model):
     )
     group = models.ManyToManyField(
         User,
-        null=True,
         blank=True,
         related_name='group',
         verbose_name='группа пользователей',
