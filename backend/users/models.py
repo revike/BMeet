@@ -13,11 +13,11 @@ class User(AbstractUser):
         blank=True,
     )
     is_verify = models.BooleanField(
-        default=False,
+        default=False, verbose_name='верифицирован'
     )
 
     is_active = models.BooleanField(
-        default=False,
+        default=False, verbose_name='активен'
     )
 
     def __str__(self):
