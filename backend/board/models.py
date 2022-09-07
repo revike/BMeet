@@ -50,13 +50,19 @@ class Board(models.Model):
 class BoardData(models.Model):
     """Объекты на доске"""
 
+    TYPE_CHOICES = (
+        ('v', 'векторная графика'),
+        ('r', 'растровая графика')
+    )
+
     board = models.ForeignKey(
         Board,
         on_delete=models.CASCADE,
         verbose_name='доска',
     )
     type = models.CharField(
-        max_length=128,
+        max_length=1,
+        choices=TYPE_CHOICES,
         verbose_name='тип объекта',
     )
     data = models.JSONField(
@@ -85,13 +91,19 @@ class BoardData(models.Model):
 class BoardDataBasket(models.Model):
     """Последние удаленные с доски объекты"""
 
+    TYPE_CHOICES = (
+        ('v', 'векторная графика'),
+        ('r', 'растровая графика')
+    )
+
     board = models.ForeignKey(
         Board,
         on_delete=models.CASCADE,
         verbose_name='доска',
     )
     type = models.CharField(
-        max_length=128,
+        max_length=1,
+        choices=TYPE_CHOICES,
         verbose_name='тип объекта',
     )
     data = models.JSONField(
