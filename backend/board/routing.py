@@ -4,6 +4,6 @@ from .consumers import BoardConsumer
 
 websockets = URLRouter([
     path(
-        "board/<int:board_id>", BoardConsumer.as_asgi(),
+        "board/<int:board_id>/", BoardConsumer.as_asgi(),
     ),
 ])
