@@ -60,7 +60,7 @@ class BoardData(models.Model):
         on_delete=models.CASCADE,
         verbose_name='доска',
     )
-    type = models.CharField(
+    type_object = models.CharField(
         max_length=1,
         choices=TYPE_CHOICES,
         verbose_name='тип объекта',

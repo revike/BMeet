@@ -11,13 +11,15 @@ def get_board(board_id):
 
 def board_to_json(board_id):
     """Получение списка всех объектов доски по id доски в формате json"""
-    return {"objects": [board_obj_to_json(obj) for obj in BoardData.objects.filter(board=board_id)]}
+    get_board(board_id)
+    board_data = BoardData.objects.filter(board=board_id)
+    return {"objects": [board_obj_to_json(obj) for obj in board_data]}
 
 
 def board_obj_to_json(board_obj):
     """Получение данных в формате json"""
-    type = str(board_obj.type)
-    return {"type": type, **board_obj.data, "id": str(board_obj.pk)}
+    type_object = str(board_obj.type_object)
+    return {"type": type_object, **board_obj.data, "id": str(board_obj.pk)}
 
 
 def add_board_obj(board_id, object_data):
@@ -25,7 +27,7 @@ def add_board_obj(board_id, object_data):
     object_data = {**object_data}
     obj = BoardData(
         board_id=board_id,
-        type=object_data.pop("type"),
+        type_object=object_data.pop("type"),
         data=object_data,
     )
     obj.save()
