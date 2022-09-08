@@ -5,3 +5,6 @@ djangorestframework==3.13.1
 psycopg2-binary==2.9.3
 pytz==2022.2.1
 sqlparse==0.4.2
+
+channels
+channels-redis
