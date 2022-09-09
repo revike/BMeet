@@ -48,6 +48,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
             self.group_name,
             {
                 "type": "send_new_board_object",
-                "content": {"type": "ADD_OBJECT", "data": {"object": content}},
+                "content": {"type": "ADD_OBJECT",
+                            "data": {"object": [content]}},
             },
         )
