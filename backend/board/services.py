@@ -5,7 +5,8 @@ from users.models import User
 def get_board(board_id):
     """Получение доски по id"""
     author = User.objects.get(pk=1)
-    board = Board.objects.get_or_create(pk=board_id, defaults={'author': author})
+    board = Board.objects.get_or_create(pk=board_id,
+                                        defaults={'author': author})
     return board
 
 

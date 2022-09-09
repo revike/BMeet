@@ -4,6 +4,10 @@ from .services import board_to_json, add_board_obj
 
 
 class BoardConsumer(AsyncJsonWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.board_id = None
+
     async def connect(self):
         self.board_id = self.scope["url_route"]["kwargs"]["board_id"]
         await self.accept()
