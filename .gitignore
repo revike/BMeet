@@ -9,3 +9,6 @@ venv
 .env
 media/
 static/
+
+BMeet/
+frontend/

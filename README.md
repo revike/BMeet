@@ -106,6 +106,49 @@
 * Переходим в директорию проекта
 
 ```cd BMeet```
+###### Frontend
+
+* Клонируем репозиторий с Frontend
+
+[Frontend repository](https://github.com/NatalyaMamicheva/BMeet.git)
+
+* Переименовываем клонированную директорию с фронтом BMeet на frontend
+
+```mv BMeet frontend```
+
+* Переходим в директорию frontend
+
+```cd frontend```
+
+* Переключаемся на ветку developer
+
+```git checkout developer```
+
+* Создаем Dockerfile
+
+```touch Dockerfile```
+
+* Содержимое Dockerfile:
+
+```dockerfile
+FROM node:16.16.0
+WORKDIR /app
+COPY my-app/package.json /app/package.json
+RUN npm install
+COPY ./my-app /app
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+
+```
+
+> Во время разработки периодические обновляем ветку frontend ```git pull```
+
+* Возвращаемся в главную директорию проекта
+
+```cd ..```
+
+###### Backend
 
 * Создаем виртуальное окружение
 
