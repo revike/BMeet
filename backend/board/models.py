@@ -39,7 +39,7 @@ class Board(models.Model):
     )
 
     def __str__(self):
-        return f'{self.id} {self.name}'
+        return f'{self.name}'
 
     class Meta:
         db_table = 'board'
@@ -80,7 +80,7 @@ class BoardData(models.Model):
     )
 
     def __str__(self):
-        return f'{self.id} {self.board.name} {self.data}'
+        return f'{self.board.name}'
 
     class Meta:
         db_table = 'board_data'
@@ -121,7 +121,7 @@ class BoardDataBasket(models.Model):
     )
 
     def __str__(self):
-        return f'{self.id} {self.board.name} {self.data}'
+        return f'{self.board.name}'
 
     class Meta:
         db_table = 'board_data_basket'
