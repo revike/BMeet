@@ -7,11 +7,11 @@ For more information on this file, see
 https://docs.djangoproject.com/en/4.1/howto/deployment/asgi/
 """
 import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 from channels.routing import ProtocolTypeRouter
 from django.core.asgi import get_asgi_application
 from board.routing import websockets
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
