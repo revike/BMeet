@@ -12,3 +12,6 @@ static/
 
 BMeet/
 frontend/
+
+gunicorn.service
+gunicorn.socket
