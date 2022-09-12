@@ -181,7 +181,7 @@ CMD ["npm", "start"]
 
 ```chmod +x docker_commands.sh```
 
-##### [Выполняем инструкцию по frontend](#frontend)
+##### [Обязательно выполняем инструкцию по frontend](#frontend)
 
 ##### Запуск
 
