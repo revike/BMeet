@@ -1,25 +1,28 @@
-from rest_framework import generics, permissions, status
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
+import hashlib
+import random
 
+from rest_framework import generics
+
+from users.permissions import IsAnonymous
 from users.serializers import RegisterModelSerializer
+from users.tasks import send_verify_mail, set_hash_password
 
 
 class RegisterApiView(generics.CreateAPIView):
     """Регистрация пользователя"""
     serializer_class = RegisterModelSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAnonymous,)
 
     def perform_create(self, serializer):
-        super().perform_create(serializer)
-        if serializer.data:
-            print('send_mail')
+        user = serializer.save()
+        salt = hashlib.sha1(
+            str(random.random()).encode('utf8')).hexdigest()[:6]
+        user.activation_key = hashlib.sha1(
+            (user.email + salt).encode('utf8')).hexdigest()
+        user.save()
+        send_verify_mail.delay(user.username, user.email, user.activation_key)
+        set_hash_password.delay(user.username, user.email, user.password)
 
-    def create(self, request, *args, **kwargs):
-        try:
-            token = self.request.headers['Authorization']
-            if Token.objects.filter(key=token.split()[1]).first():
-                return Response(data={'detail': 'You are already logged in'},
-                                status=status.HTTP_400_BAD_REQUEST)
-        except KeyError:
-            return super().create(request, *args, **kwargs)
+
+class VerificationKeyApiView(generics.UpdateAPIView):
+    """Верификация пользователя"""
