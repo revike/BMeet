@@ -106,7 +106,7 @@
 * Переходим в директорию проекта
 
 ```cd BMeet```
-###### Frontend
+###### <a name="frontend"></a> Frontend
 
 * Клонируем репозиторий с Frontend
 
@@ -148,7 +148,7 @@ CMD ["npm", "start"]
 
 ```cd ..```
 
-###### Backend
+###### Backend или [запуск с помощью docker-compose](#docker)
 
 * Создаем виртуальное окружение
 
@@ -174,12 +174,14 @@ CMD ["npm", "start"]
 
 ```python backend/manage.py runserver```
 
-Запуск с помощью docker-compose
+<a name="docker"></a> Запуск с помощью docker-compose
 -------------------------------
 
-###### делаем файл docker_commands.sh исполняемым
+###### Делаем файл docker_commands.sh исполняемым
 
 ```chmod +x docker_commands.sh```
+
+##### [Обязательно выполняем инструкцию по frontend](#frontend)
 
 ##### Запуск
 
