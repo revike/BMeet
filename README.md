@@ -124,29 +124,21 @@
 
 ```git checkout developer```
 
-* Создаем Dockerfile
+* Переходим в директорию my-app
 
-```touch Dockerfile```
+```cd my-app```
 
-* Содержимое Dockerfile:
+* Создаем файл .env такой же, как .env.example (меняем настройки при необходимости)
 
-```dockerfile
-FROM node:16.16.0
-WORKDIR /app
-COPY my-app/package.json /app/package.json
-RUN npm install
-COPY ./my-app /app
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
+```touch .env```
 
-```
-
-> Во время разработки периодические обновляем ветку frontend ```git pull```
+> Во время разработки периодические обновляем ветку frontend 
+ 
+```git pull```
 
 * Возвращаемся в главную директорию проекта
 
-```cd ..```
+```cd ../..```
 
 ###### Backend или [запуск с помощью docker-compose](#docker)
 
