@@ -8,6 +8,7 @@ app_name = 'users'
 urlpatterns = [
     path('token/', ObtainAuthToken.as_view(), name='token'),
     path('register/', RegisterApiView.as_view(), name='register'),
+    path('register/<int:pk>/', RegisterApiView.as_view(), name='resend_email'),
     path('verify/<email>/<activation_key>/',
          VerificationKeyApiView.as_view(), name='verify'),
 ]
