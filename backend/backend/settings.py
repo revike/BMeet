@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'channels',
     'corsheaders',
-    'django_celery_beat',
-    'django_celery_results',
 
     'board',
     'users',
@@ -191,4 +189,3 @@ CELERY_RESULT_BACKEND = f'redis://{env("REDIS_HOST")}:{env("REDIS_PORT")}'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'

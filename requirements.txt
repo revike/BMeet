@@ -17,12 +17,9 @@ constantly==15.1.0
 cryptography==38.0.1
 daphne==3.0.2
 Deprecated==1.2.13
-Django==4.0.7
-django-celery-beat==2.3.0
-django-celery-results==2.4.0
+Django==4.1.1
 django-cors-headers==3.13.0
 django-environ==0.9.0
-django-timezone-field==5.0
 djangorestframework==3.13.1
 gunicorn==20.1.0
 h11==0.13.0
@@ -39,8 +36,6 @@ pyasn1-modules==0.2.8
 pycparser==2.21
 pyOpenSSL==22.0.0
 pyparsing==3.0.9
-python-crontab==2.6.0
-python-dateutil==2.8.2
 pytz==2022.2.1
 redis==4.3.4
 service-identity==21.1.0
@@ -49,7 +44,6 @@ sqlparse==0.4.2
 Twisted==22.8.0
 txaio==22.2.1
 typing_extensions==4.3.0
-tzdata==2022.2
 uvicorn==0.18.3
 vine==5.0.0
 wcwidth==0.2.5
