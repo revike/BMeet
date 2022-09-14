@@ -1,4 +1,4 @@
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password
 from django.db import IntegrityError
 from rest_framework import generics, status
 from rest_framework.response import Response
