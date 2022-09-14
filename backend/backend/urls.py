@@ -15,8 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="BMeet",
+        default_version='1',
+        description="Documentation to project BMeet",
+        contact=openapi.Contact(email="bmeet.info@mail.ru"),
+        license=openapi.License(name="Evgeniy Fedorin"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls', namespace='users'))
+    path('api/users/', include('users.urls', namespace='users')),
+
+    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0),
+         name='schema-swagger-ui'),
 ]
