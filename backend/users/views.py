@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password, check_password
 from django.db import IntegrityError
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -20,7 +21,14 @@ class RegisterApiView(RegisterUserMixin, generics.CreateAPIView,
         self.register_user(serializer)
 
     def perform_update(self, serializer):
-        self.register_user(serializer)
+        data = serializer.validated_data
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        user = User.objects.filter(username=username, email=email,
+                                   is_verify=False).first()
+        if user and check_password(password, user.password):
+            self.register_user(serializer)
 
 
 class VerificationKeyApiView(generics.UpdateAPIView):
