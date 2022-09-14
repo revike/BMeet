@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.views import APIView
 
 from users.models import User
 from users.permissions import IsAnonymous
@@ -54,3 +55,11 @@ class VerificationKeyApiView(generics.UpdateAPIView):
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Activation key': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutApiView(APIView):
+    """Logout"""
+
+    def get(self, request):
+        request.user.auth_token.delete()
+        return Response(data={'user': 'logout'}, status=status.HTTP_200_OK)

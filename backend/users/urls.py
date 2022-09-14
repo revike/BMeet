@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.authtoken.views import ObtainAuthToken
 
-from users.views import RegisterApiView, VerificationKeyApiView
+from users.views import RegisterApiView, VerificationKeyApiView, LogoutApiView
 
 app_name = 'users'
 
@@ -11,4 +11,5 @@ urlpatterns = [
     path('register/<int:pk>/', RegisterApiView.as_view(), name='resend_email'),
     path('verify/<email>/<activation_key>/',
          VerificationKeyApiView.as_view(), name='verify'),
+    path('logout/', LogoutApiView.as_view(), name='logout')
 ]
