@@ -25,7 +25,6 @@ schema_view = get_schema_view(
         default_version='1',
         description="Documentation to project BMeet",
         contact=openapi.Contact(email="bmeet.info@mail.ru"),
-        license=openapi.License(name="Evgeniy Fedorin"),
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
