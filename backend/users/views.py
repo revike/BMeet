@@ -1,13 +1,13 @@
 from django.contrib.auth.hashers import check_password
 from django.db import IntegrityError
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 
 from users.models import User
 from users.permissions import IsAnonymous
-from users.serializers import RegisterModelSerializer
+from users.serializers import RegisterModelSerializer, UserSerializer
 from users.utils import RegisterUserMixin
 
 
@@ -63,3 +63,10 @@ class LogoutApiView(APIView):
     def get(self, request):
         request.user.auth_token.delete()
         return Response(data={'user': 'logout'}, status=status.HTTP_200_OK)
+
+
+class UserApiView(generics.ListAPIView):
+    """Пользователи для тестирования авторизации"""
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
