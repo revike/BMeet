@@ -9,3 +9,11 @@ class RegisterModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Временный Сериализатор для тестирования авторизации"""
+
+    class Meta:
+        model = User
+        fields = '__all__'
