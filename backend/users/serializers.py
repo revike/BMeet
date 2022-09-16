@@ -16,13 +16,18 @@ class RegisterModelSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(AuthTokenSerializer):
     """Сериализатор Login"""
+    email = serializers.CharField(
+        label=_("Email"),
+        write_only=True
+    )
+    username = ...
 
     def validate(self, attrs):
-        username = attrs.get('username')
+        email = attrs.get('email')
         password = attrs.get('password')
-        if username and password:
+        if email and password:
             user = User.objects.filter(
-                Q(username=username) | Q(email=username)).filter(
+                Q(username=email) | Q(email=email)).filter(
                 is_verify=True).first()
             if not user or not user.check_password(password):
                 msg = _('Unable to log in with provided credentials.')

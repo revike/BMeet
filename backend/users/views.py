@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework import generics, status, permissions
+from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -61,6 +62,16 @@ class VerificationKeyApiView(RegisterUserMixin, generics.UpdateAPIView):
 class LoginApiView(ObtainAuthToken):
     """Login"""
     serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'username': f'{token.user.username}',
+            'token': f'Token {token.key}'
+        })
 
 
 class LogoutApiView(APIView):

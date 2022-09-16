@@ -36,7 +36,10 @@ class RegisterUserMixin:
         except IntegrityError:
             Token.objects.get(user=user).delete()
             token = Token.objects.create(user=user)
-        return {'token': f'Token {token.key}'}
+        return {
+            'username': f'{token.user.username}',
+            'token': f'Token {token.key}'
+        }
 
     @staticmethod
     def generate_key(email):
