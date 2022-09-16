@@ -35,7 +35,7 @@ class ResendApiView(RegisterUserMixin, generics.UpdateAPIView):
         user = User.objects.filter(username=username, email=email,
                                    is_verify=False).first()
         if user and check_password(password, user.password):
-            self.resend_mail(user)
+            self.resend_mail(user, password)
             return Response(data=self.request.data, status=status.HTTP_200_OK)
         data = {'Invalid': 'The request failed'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)

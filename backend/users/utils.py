@@ -18,12 +18,12 @@ class RegisterUserMixin:
         send_verify_mail.delay(user.username, user.email, user.activation_key)
         set_hash_password.delay(user.username, user.email, user.password)
 
-    def resend_mail(self, user):
+    def resend_mail(self, user, password):
         """Повторная отправка ключа верификации"""
         user.activation_key = self.generate_key(user.email)
         user.save()
         send_verify_mail.delay(user.username, user.email, user.activation_key)
-        set_hash_password.delay(user.username, user.email, user.password)
+        set_hash_password.delay(user.username, user.email, password)
 
     @staticmethod
     def active_user(user):
