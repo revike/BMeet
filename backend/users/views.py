@@ -46,7 +46,7 @@ class VerificationKeyApiView(RegisterUserMixin, generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = VerifyModelSerializer
     permission_classes = (IsAnonymous,)
-    lookup_field = 'email'
+    lookup_field = ('email', 'activation_key',)
 
     def update(self, request, *args, **kwargs):
         user = User.objects.filter(activation_key=kwargs['activation_key'],
@@ -100,7 +100,7 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
     """Генерация нового пароля"""
     serializer_class = RecoverySerializer
     permission_classes = (IsAnonymous,)
-    lookup_field = 'email'
+    lookup_field = ('email', 'key',)
 
     def update(self, request, *args, **kwargs):
         user = User.objects.filter(activation_key=kwargs['key'],
