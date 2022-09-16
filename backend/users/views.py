@@ -103,7 +103,7 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
     lookup_field = ('email', 'key',)
 
     def update(self, request, *args, **kwargs):
-        user = User.objects.filter(activation_key=kwargs['key'],
+        user = User.objects.filter(activation_key=kwargs['activation_key'],
                                    email=kwargs['email']).first()
         if user:
             password = self.generate_password()

@@ -15,8 +15,8 @@ urlpatterns = [
     path('logout/', LogoutApiView.as_view(), name='logout'),
     path('recovery/<email>/', RecoveryPasswordApiView.as_view(),
          name='send_recovery'),
-    path('recovery/<email>/<key>/', GeneratePasswordApiView.as_view(),
-         name='recovery'),
+    path('recovery/<email>/<activation_key>/',
+         GeneratePasswordApiView.as_view(), name='recovery'),
 
     path('users/', UserApiView.as_view(), name='users'),
 ]
