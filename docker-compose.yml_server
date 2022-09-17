@@ -1,9 +1,35 @@
 version: "3.3"
 
 services:
+  celery:
+    restart: always
+    container_name: celery
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "cd backend && celery -A backend worker -l info && cd .."
+    volumes:
+      - celery_data:/var/lib/celery/data
+    depends_on:
+      - redis
+
+  celery_beat:
+    restart: always
+    container_name: celery_beat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "cd backend && celery -A backend beat -l info && cd .."
+    volumes:
+      - celery_data:/var/lib/celery_beat/data
+    depends_on:
+      - redis
+
   redis:
     image: redis:5
     container_name: bmeet_redis
+    volumes:
+      - redis_data:/var/lib/redis/data
     expose:
       - 6379
 
@@ -47,3 +73,6 @@ services:
 
 volumes:
   pg_data:
+  redis_data:
+  celery_data:
+  celery_beat:
