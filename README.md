@@ -106,7 +106,7 @@
 * Переходим в директорию проекта
 
 ```cd BMeet```
-###### Frontend
+###### <a name="frontend"></a> Frontend
 
 * Клонируем репозиторий с Frontend
 
@@ -124,31 +124,23 @@
 
 ```git checkout developer```
 
-* Создаем Dockerfile
+* Переходим в директорию my-app
 
-```touch Dockerfile```
+```cd my-app```
 
-* Содержимое Dockerfile:
+* Создаем файл .env такой же, как .env.example (меняем настройки при необходимости)
 
-```dockerfile
-FROM node:16.16.0
-WORKDIR /app
-COPY my-app/package.json /app/package.json
-RUN npm install
-COPY ./my-app /app
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
+```touch .env```
 
-```
-
-> Во время разработки периодические обновляем ветку frontend ```git pull```
+> Во время разработки периодические обновляем ветку frontend 
+ 
+```git pull```
 
 * Возвращаемся в главную директорию проекта
 
-```cd ..```
+```cd ../..```
 
-###### Backend
+###### Backend или [запуск с помощью docker-compose](#docker)
 
 * Создаем виртуальное окружение
 
@@ -174,12 +166,14 @@ CMD ["npm", "start"]
 
 ```python backend/manage.py runserver```
 
-Запуск с помощью docker-compose
+<a name="docker"></a> Запуск с помощью docker-compose
 -------------------------------
 
-###### делаем файл docker_commands.sh исполняемым
+###### Делаем файл docker_commands.sh исполняемым
 
 ```chmod +x docker_commands.sh```
+
+##### [Обязательно выполняем инструкцию по frontend](#frontend)
 
 ##### Запуск
 

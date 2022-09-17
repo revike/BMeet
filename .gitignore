@@ -12,3 +12,6 @@ static/
 
 frontend/
 frontend/
+
+gunicorn.service
+gunicorn.socket
