@@ -4,25 +4,29 @@ services:
   celery:
     restart: always
     container_name: celery
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: bmeet_web
+    env_file:
+      - .env
     command: bash -c "cd backend && celery -A backend worker -l info && cd .."
     volumes:
       - celery_data:/var/lib/celery/data
+      - .:/code
     depends_on:
+      - web
       - redis
 
   celery_beat:
     restart: always
     container_name: celery_beat
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: bmeet_web
+    env_file:
+      - .env
     command: bash -c "cd backend && celery -A backend beat -l info && cd .."
     volumes:
       - celery_data:/var/lib/celery_beat/data
+      - .:/code
     depends_on:
+      - web
       - redis
 
   redis:
@@ -48,6 +52,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: bmeet_web
     container_name: bmeet_web
     volumes:
       - .:/code

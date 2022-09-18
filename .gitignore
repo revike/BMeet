@@ -15,3 +15,4 @@ frontend/
 
 gunicorn.service
 gunicorn.socket
+celerybeat-schedule
