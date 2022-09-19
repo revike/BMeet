@@ -53,11 +53,3 @@ class RecoverySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email',)
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """Временный Сериализатор для тестирования авторизации"""
-
-    class Meta:
-        model = User
-        fields = '__all__'
