@@ -7,3 +7,4 @@ websockets = URLRouter([
         "api/board/<int:board_id>/", BoardConsumer.as_asgi(),
     ),
 ])
+

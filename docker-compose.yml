@@ -71,10 +71,21 @@ services:
       context: ./frontend/
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:80"
     container_name: frontend
     depends_on:
       - web
+
+#  nginx:
+#    image: nginx:stable-alpine
+#    container_name: nginx
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - web
+#      - frontend
+#    volumes:
+#      - ./nginx:/etc/nginx/templates
 
 volumes:
   pg_data:
