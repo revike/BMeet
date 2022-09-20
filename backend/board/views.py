@@ -7,6 +7,7 @@ from users.models import User
 
 
 class BoardListApiView(generics.ListCreateAPIView):
+    """Список досок"""
     serializer_class = BoardSerializer
     pagination_class = None
 
