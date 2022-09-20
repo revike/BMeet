@@ -2,7 +2,6 @@ from celery import shared_task
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
-from django.urls import reverse
 
 from users.models import User
 
@@ -12,7 +11,7 @@ from users.models import User
 def send_verify_mail(username, email, activation_key):
     """Отправка email с key verification"""
     url = settings.CORS_ALLOWED_ORIGINS[0]
-    verify_url = reverse('users:verify', args=[email, activation_key])
+    verify_url = f'/users/verify/{email}/{activation_key}/'
     subject = 'Подтверждение учетной записи'
     message = f'{username}, для подтверждения учетной записи на сайте {url},' \
               f' перейдите по ссылке:\n{url}{verify_url}'
@@ -34,7 +33,7 @@ def set_hash_password(username, email, password):
 def send_recovery_mail(email, key):
     """Отправка email для подтверждения восстановления пароля"""
     url = settings.CORS_ALLOWED_ORIGINS[0]
-    recovery_url = reverse('users:recovery', args=[email, key])
+    recovery_url = f'/users/recovery/{email}/{key}/'
     subject = 'Восстановление пароля'
     message = f'Если вы хотите восстановить пароль, ' \
               f'перейдите по ссылке:\n{url}{recovery_url}\n'

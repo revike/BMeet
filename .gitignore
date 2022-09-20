@@ -10,8 +10,9 @@ venv
 media/
 static/
 
-BMeet/
 frontend/
 
 gunicorn.service
 gunicorn.socket
+celerybeat-schedule
+static_back/
