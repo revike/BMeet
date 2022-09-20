@@ -32,7 +32,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 class BoardSerializer(serializers.ModelSerializer):
     """Сериализатор доски"""
     author = AuthorSerializer(required=False)
-    group = GroupSerializer(many=True, read_only=True)
+    group = GroupSerializer(many=True)
 
     class Meta:
         model = Board
