@@ -2,7 +2,6 @@ from celery import shared_task
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
-from django.urls import reverse
 
 from users.models import User
 
