@@ -1,7 +1,7 @@
 from django.urls import path
 
 from users.views import RegisterApiView, VerificationKeyApiView, \
-    LogoutApiView, UserApiView, RecoveryPasswordApiView, \
+    LogoutApiView, RecoveryPasswordApiView, \
     GeneratePasswordApiView, ResendApiView, LoginApiView
 
 app_name = 'users'
@@ -17,6 +17,4 @@ urlpatterns = [
          name='send_recovery'),
     path('recovery/<email>/<activation_key>/',
          GeneratePasswordApiView.as_view(), name='recovery'),
-
-    path('users/', UserApiView.as_view(), name='users'),
 ]

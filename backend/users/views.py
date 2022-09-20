@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from users.models import User
 from users.permissions import IsAnonymous
-from users.serializers import RegisterModelSerializer, UserSerializer, \
+from users.serializers import RegisterModelSerializer, \
     RecoverySerializer, VerifyModelSerializer, LoginSerializer
 from users.tasks import send_recovery_mail, send_new_password
 from users.utils import RegisterUserMixin
@@ -80,13 +80,6 @@ class LogoutApiView(APIView):
     def get(self, request):
         request.user.auth_token.delete()
         return Response(data={'user': 'logout'}, status=status.HTTP_200_OK)
-
-
-class UserApiView(generics.ListAPIView):
-    """Пользователи для тестирования авторизации"""
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 class RecoveryPasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
