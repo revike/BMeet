@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -6,7 +7,6 @@ from cabinet.serializers import UserSerializer
 from cabinet.tasks import send_update_mail
 from users.models import User
 from users.utils import RegisterUserMixin
-from users.views import VerificationKeyApiView
 
 
 class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
@@ -29,10 +29,9 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
             'last_name': data.get('last_name') if data.get(
                 'last_name') else request.user.last_name,
         }
-        if request.data.get('password'):
-            return Response(data=status.HTTP_400_BAD_REQUEST,
-                            status=status.HTTP_400_BAD_REQUEST)
-        if request.data.get('email'):
+        if data.get('password'):
+            new_data['password'] = make_password(data.get('password'))
+        if data.get('email'):
             user = self.request.user
             if user.email != data.get('email'):
                 self._get_serializer(data)
