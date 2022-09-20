@@ -127,3 +127,13 @@ class BoardDataBasket(models.Model):
         db_table = 'board_data_basket'
         verbose_name = 'Удаленный объект'
         verbose_name_plural = 'Удаленные объекты'
+
+
+class NoRegisterUser(models.Model):
+    """Незарегистрированные приглашенные пользователи"""
+    board = models.ForeignKey('Board', on_delete=models.CASCADE, null=True,
+                              verbose_name='доска')
+    email = models.EmailField(unique=False, verbose_name='email')
+
+    def __str__(self):
+        return f'{self.email}'

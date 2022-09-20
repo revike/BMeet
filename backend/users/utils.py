@@ -3,6 +3,7 @@ from random import random
 
 from django.db import IntegrityError
 
+from board.models import NoRegisterUser, Board
 from users.tasks import send_verify_mail, set_hash_password
 from rest_framework.authtoken.models import Token
 
@@ -31,6 +32,11 @@ class RegisterUserMixin:
         user.is_verify, user.is_active = True, True
         user.activation_key = ''
         user.save()
+        no_register_user = NoRegisterUser.objects.filter(email=user.email)
+        for no_reg_user in no_register_user:
+            board = Board.objects.get(id=no_reg_user.board.id)
+            board.group.add(user)
+            no_register_user.delete()
         try:
             token = Token.objects.create(user=user)
         except IntegrityError:
