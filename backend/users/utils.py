@@ -33,10 +33,11 @@ class RegisterUserMixin:
         user.activation_key = ''
         user.save()
         no_register_user = NoRegisterUser.objects.filter(email=user.email)
-        for no_reg_user in no_register_user:
-            board = Board.objects.get(id=no_reg_user.board.id)
-            board.group.add(user)
-            no_register_user.delete()
+        if no_register_user.count():
+            for no_reg_user in no_register_user:
+                board = Board.objects.get(id=no_reg_user.board.id)
+                board.group.add(user)
+                no_register_user.delete()
         try:
             token = Token.objects.create(user=user)
         except IntegrityError:
