@@ -23,6 +23,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class AuthorSerializer(serializers.ModelSerializer):
     """Сериализатор пользователя"""
+    username = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
 
     class Meta:
         model = User
@@ -32,7 +34,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 class BoardSerializer(serializers.ModelSerializer):
     """Сериализатор доски"""
     author = AuthorSerializer(required=False)
-    group = GroupSerializer(many=True, read_only=True)
+    group = GroupSerializer(many=True, required=False)
 
     class Meta:
         model = Board

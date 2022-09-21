@@ -5,11 +5,11 @@ from django.core.mail import send_mail
 
 @shared_task(autoretry_for=(Exception,),
              retry_kwargs={'max_retries': 7, 'countdown': 10})
-def send_update_mail(email, email_old, key):
-    """Отправка письма для обновления email"""
+def send_mail_add_group(email, board_id):
+    """Отправка письма приглашения в группу"""
     url = settings.CORS_ALLOWED_ORIGINS[0]
-    url_mail_update = f'/profile/{email_old}/{email}/{key}/'
-    subject = 'Подтвердите изменение email'
-    msg = f'Для изменения email перейдите по ссылке:\n{url}{url_mail_update}'
+    url_board = f'/board/{board_id}/'
+    subject = 'Приглашение группу!'
+    msg = f'Вас пригласили в группу на сайте {url}.\nДоступно ссылке:\n{url}{url_board}'
     return send_mail(subject, msg, settings.EMAIL_HOST_USER,
                      [email], fail_silently=False)
