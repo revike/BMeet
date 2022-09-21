@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from board.models import BoardData
+from board.models import BoardData, Board
+from users.models import User
 
 
 class BoardDataSerializer(serializers.ModelSerializer):
@@ -8,4 +9,31 @@ class BoardDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BoardData
+        fields = '__all__'
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    """Сериализатор группы пользователей"""
+    email = serializers.EmailField(required=False)
+
+    class Meta:
+        model = User
+        fields = ('email',)
+
+
+class AuthorSerializer(serializers.ModelSerializer):
+    """Сериализатор пользователя"""
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')
+
+
+class BoardSerializer(serializers.ModelSerializer):
+    """Сериализатор доски"""
+    author = AuthorSerializer(required=False)
+    group = GroupSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Board
         fields = '__all__'
