@@ -38,10 +38,9 @@ class RegisterUserMixin:
                 board = Board.objects.get(id=no_reg_user.board.id)
                 board.group.add(user)
                 no_register_user.delete()
-        try:
-            token = Token.objects.create(user=user)
-        except IntegrityError:
-            Token.objects.get(user=user).delete()
+        token, create = Token.objects.get_or_create(user=user)
+        if not create:
+            user.auth_token.delete()
             token = Token.objects.create(user=user)
         return {
             'username': f'{token.user.username}',

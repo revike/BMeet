@@ -178,3 +178,9 @@
 ##### Запуск
 
 ```docker-compose up -d --build```
+
+##### Запуск тестов (docker-compose должен быть запущен)
+###### Тесты приложения users
+```
+docker-compose exec web python backend/manage.py test users
+```

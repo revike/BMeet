@@ -1,5 +1,5 @@
 from django.contrib.auth.hashers import check_password, make_password
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
@@ -33,8 +33,8 @@ class ResendApiView(RegisterUserMixin, generics.UpdateAPIView):
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
-        user = User.objects.filter(username=username, email=email,
-                                   is_verify=False).first()
+        user = User.objects.filter(id=kwargs['pk'], username=username,
+                                   email=email, is_verify=False).first()
         if user and check_password(password, user.password):
             self.resend_mail(user, password)
             return Response(data=self.request.data, status=status.HTTP_200_OK)
