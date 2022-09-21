@@ -1,0 +1,955 @@
+[
+  {
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+      "action_time": "2022-09-21T08:17:59.600Z",
+      "user": 1,
+      "content_type": 12,
+      "object_id": "2",
+      "object_repr": "user1 - user1@example.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Activation key\", \"\\u0412\\u0435\\u0440\\u0438\\u0444\\u0438\\u0446\\u0438\\u0440\\u043e\\u0432\\u0430\\u043d\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+      "action_time": "2022-09-21T08:18:09.149Z",
+      "user": 1,
+      "content_type": 12,
+      "object_id": "3",
+      "object_repr": "user2 - user2@example.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Activation key\", \"\\u0412\\u0435\\u0440\\u0438\\u0444\\u0438\\u0446\\u0438\\u0440\\u043e\\u0432\\u0430\\u043d\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 3,
+    "fields": {
+      "action_time": "2022-09-21T08:18:19.529Z",
+      "user": 1,
+      "content_type": 12,
+      "object_id": "4",
+      "object_repr": "user3 - user3@example.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Activation key\", \"\\u0412\\u0435\\u0440\\u0438\\u0444\\u0438\\u0446\\u0438\\u0440\\u043e\\u0432\\u0430\\u043d\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 4,
+    "fields": {
+      "action_time": "2022-09-21T08:18:59.751Z",
+      "user": 1,
+      "content_type": 12,
+      "object_id": "7",
+      "object_repr": "user6 - user6@example.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Activation key\", \"Active\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 5,
+    "fields": {
+      "action_time": "2022-09-21T08:24:28.797Z",
+      "user": 1,
+      "content_type": 8,
+      "object_id": "1",
+      "object_repr": "поле.",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"name\": \"\\u041e\\u0431\\u044a\\u0435\\u043a\\u0442 \\u043d\\u0430 \\u0434\\u043e\\u0441\\u043a\\u0435\", \"object\": \"\\u043f\\u043e\\u043b\\u0435.\", \"fields\": [\"\\u0414\\u043e\\u0431\\u0430\\u0432\\u0438\\u043b \\u043f\\u043e\\u043b\\u044c\\u0437\\u043e\\u0432\\u0430\\u0442\\u0435\\u043b\\u044c\"]}}, {\"changed\": {\"name\": \"\\u041e\\u0431\\u044a\\u0435\\u043a\\u0442 \\u043d\\u0430 \\u0434\\u043e\\u0441\\u043a\\u0435\", \"object\": \"\\u043f\\u043e\\u043b\\u0435.\", \"fields\": [\"\\u0414\\u043e\\u0431\\u0430\\u0432\\u0438\\u043b \\u043f\\u043e\\u043b\\u044c\\u0437\\u043e\\u0432\\u0430\\u0442\\u0435\\u043b\\u044c\"]}}, {\"changed\": {\"name\": \"\\u041e\\u0431\\u044a\\u0435\\u043a\\u0442 \\u043d\\u0430 \\u0434\\u043e\\u0441\\u043a\\u0435\", \"object\": \"\\u043f\\u043e\\u043b\\u0435.\", \"fields\": [\"\\u0414\\u043e\\u0431\\u0430\\u0432\\u0438\\u043b \\u043f\\u043e\\u043b\\u044c\\u0437\\u043e\\u0432\\u0430\\u0442\\u0435\\u043b\\u044c\"]}}, {\"changed\": {\"name\": \"\\u041e\\u0431\\u044a\\u0435\\u043a\\u0442 \\u043d\\u0430 \\u0434\\u043e\\u0441\\u043a\\u0435\", \"object\": \"\\u043f\\u043e\\u043b\\u0435.\", \"fields\": [\"\\u0414\\u043e\\u0431\\u0430\\u0432\\u0438\\u043b \\u043f\\u043e\\u043b\\u044c\\u0437\\u043e\\u0432\\u0430\\u0442\\u0435\\u043b\\u044c\"]}}]"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "y6i51l54nlio7zvjxuapdrj1x2lfy3x3",
+    "fields": {
+      "session_data": ".eJxVjMsOwiAQRf-FtSGMPAou3fcbyDBMpWogKe3K-O_apAvd3nPOfYmI21ri1nmJcxYXAeL0uyWkB9cd5DvWW5PU6rrMSe6KPGiXY8v8vB7u30HBXr61RvTBKwI7BO-BdLZw9jygQjITTAEcJEyG2YG2iozRCTRn6zg4QCfeH87mN2g:1oausT:HBGHCFmkXhHjuQKpSMdB5obfhOzPWZsVndL2Dr6NUjM",
+      "expire_date": "2022-10-05T08:14:41.642Z"
+    }
+  },
+  {
+    "model": "authtoken.token",
+    "pk": "bd15d76cf2f9767feeb76a118239f67b359abaf3",
+    "fields": {
+      "user": 3,
+      "created": "2022-09-21T08:21:53.034Z"
+    }
+  },
+  {
+    "model": "authtoken.token",
+    "pk": "c2b1921e44e79394863a1b21283db02721bec91e",
+    "fields": {
+      "user": 2,
+      "created": "2022-09-21T08:21:04.808Z"
+    }
+  },
+  {
+    "model": "authtoken.token",
+    "pk": "da39301b41e47a2df7e72cf17c3f4437d0d071b3",
+    "fields": {
+      "user": 4,
+      "created": "2022-09-21T08:22:37.447Z"
+    }
+  },
+  {
+    "model": "board.board",
+    "pk": 1,
+    "fields": {
+      "author": 2,
+      "name": "поле.",
+      "description": "description",
+      "is_active": true,
+      "created": "2022-09-21T08:21:21.919Z",
+      "updated": "2022-09-21T08:24:28.793Z",
+      "group": [
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "model": "board.board",
+    "pk": 2,
+    "fields": {
+      "author": 2,
+      "name": "поле.",
+      "description": "description",
+      "is_active": true,
+      "created": "2022-09-21T08:21:31.846Z",
+      "updated": "2022-09-21T08:21:31.846Z",
+      "group": [
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "model": "board.board",
+    "pk": 3,
+    "fields": {
+      "author": 2,
+      "name": "поле.",
+      "description": "description",
+      "is_active": true,
+      "created": "2022-09-21T08:21:35.478Z",
+      "updated": "2022-09-21T08:21:35.478Z",
+      "group": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "board.board",
+    "pk": 4,
+    "fields": {
+      "author": 2,
+      "name": "поле.",
+      "description": "description",
+      "is_active": true,
+      "created": "2022-09-21T08:21:42.825Z",
+      "updated": "2022-09-21T08:21:42.825Z",
+      "group": [
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "model": "board.board",
+    "pk": 5,
+    "fields": {
+      "author": 3,
+      "name": "поле.",
+      "description": "description",
+      "is_active": true,
+      "created": "2022-09-21T08:22:11.287Z",
+      "updated": "2022-09-21T08:22:11.287Z",
+      "group": [
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "model": "board.board",
+    "pk": 6,
+    "fields": {
+      "author": 3,
+      "name": "поле.",
+      "description": "description",
+      "is_active": true,
+      "created": "2022-09-21T08:22:20.365Z",
+      "updated": "2022-09-21T08:22:20.365Z",
+      "group": [
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "model": "board.board",
+    "pk": 7,
+    "fields": {
+      "author": 3,
+      "name": "поле.",
+      "description": "description",
+      "is_active": true,
+      "created": "2022-09-21T08:22:25.356Z",
+      "updated": "2022-09-21T08:22:25.356Z",
+      "group": [
+        3
+      ]
+    }
+  },
+  {
+    "model": "board.boarddata",
+    "pk": 1,
+    "fields": {
+      "board": 1,
+      "type_object": "r",
+      "data": {
+        "color": null,
+        "coord": [
+          [
+            456,
+            217
+          ],
+          [
+            477,
+            217
+          ],
+          [
+            480,
+            217
+          ],
+          [
+            490,
+            217
+          ],
+          [
+            507,
+            217
+          ],
+          [
+            517,
+            217
+          ],
+          [
+            531,
+            217
+          ],
+          [
+            546,
+            217
+          ],
+          [
+            558,
+            217
+          ],
+          [
+            572,
+            218
+          ],
+          [
+            586,
+            219
+          ],
+          [
+            599,
+            221
+          ],
+          [
+            613,
+            224
+          ],
+          [
+            622,
+            228
+          ],
+          [
+            635,
+            235
+          ],
+          [
+            647,
+            242
+          ],
+          [
+            658,
+            251
+          ],
+          [
+            669,
+            261
+          ],
+          [
+            677,
+            273
+          ],
+          [
+            685,
+            285
+          ],
+          [
+            692,
+            300
+          ],
+          [
+            697,
+            312
+          ],
+          [
+            703,
+            329
+          ],
+          [
+            707,
+            343
+          ],
+          [
+            714,
+            358
+          ],
+          [
+            720,
+            374
+          ],
+          [
+            727,
+            387
+          ],
+          [
+            735,
+            398
+          ],
+          [
+            743,
+            410
+          ],
+          [
+            745,
+            412
+          ]
+        ],
+        "width": null,
+        "other_data": null
+      },
+      "user_update": 2,
+      "updated": "2022-09-21T08:24:28.794Z"
+    }
+  },
+  {
+    "model": "board.boarddata",
+    "pk": 2,
+    "fields": {
+      "board": 1,
+      "type_object": "r",
+      "data": {
+        "color": null,
+        "coord": [
+          [
+            1153,
+            378
+          ],
+          [
+            1155,
+            377
+          ],
+          [
+            1157,
+            375
+          ],
+          [
+            1160,
+            373
+          ],
+          [
+            1163,
+            370
+          ],
+          [
+            1165,
+            367
+          ],
+          [
+            1170,
+            363
+          ],
+          [
+            1174,
+            359
+          ],
+          [
+            1178,
+            355
+          ],
+          [
+            1182,
+            351
+          ],
+          [
+            1190,
+            346
+          ],
+          [
+            1199,
+            343
+          ],
+          [
+            1209,
+            339
+          ],
+          [
+            1222,
+            336
+          ],
+          [
+            1238,
+            334
+          ],
+          [
+            1256,
+            333
+          ],
+          [
+            1277,
+            332
+          ],
+          [
+            1295,
+            332
+          ],
+          [
+            1313,
+            332
+          ],
+          [
+            1328,
+            333
+          ],
+          [
+            1344,
+            334
+          ],
+          [
+            1356,
+            338
+          ],
+          [
+            1365,
+            342
+          ],
+          [
+            1376,
+            347
+          ],
+          [
+            1384,
+            353
+          ],
+          [
+            1390,
+            362
+          ],
+          [
+            1394,
+            370
+          ],
+          [
+            1398,
+            381
+          ],
+          [
+            1399,
+            392
+          ],
+          [
+            1401,
+            402
+          ],
+          [
+            1401,
+            415
+          ],
+          [
+            1401,
+            428
+          ],
+          [
+            1399,
+            437
+          ],
+          [
+            1393,
+            451
+          ],
+          [
+            1386,
+            462
+          ],
+          [
+            1379,
+            472
+          ]
+        ],
+        "width": null,
+        "other_data": null
+      },
+      "user_update": 2,
+      "updated": "2022-09-21T08:24:28.795Z"
+    }
+  },
+  {
+    "model": "board.boarddata",
+    "pk": 3,
+    "fields": {
+      "board": 1,
+      "type_object": "r",
+      "data": {
+        "color": null,
+        "coord": [
+          [
+            726,
+            501
+          ],
+          [
+            724,
+            499
+          ],
+          [
+            717,
+            497
+          ],
+          [
+            709,
+            494
+          ],
+          [
+            700,
+            491
+          ],
+          [
+            690,
+            488
+          ],
+          [
+            675,
+            484
+          ],
+          [
+            662,
+            482
+          ],
+          [
+            649,
+            481
+          ],
+          [
+            635,
+            479
+          ],
+          [
+            622,
+            479
+          ],
+          [
+            607,
+            478
+          ],
+          [
+            592,
+            478
+          ],
+          [
+            573,
+            478
+          ],
+          [
+            557,
+            479
+          ],
+          [
+            540,
+            481
+          ],
+          [
+            521,
+            486
+          ],
+          [
+            505,
+            490
+          ],
+          [
+            490,
+            494
+          ],
+          [
+            476,
+            499
+          ],
+          [
+            466,
+            505
+          ],
+          [
+            458,
+            511
+          ],
+          [
+            451,
+            517
+          ],
+          [
+            446,
+            523
+          ],
+          [
+            443,
+            528
+          ],
+          [
+            443,
+            534
+          ],
+          [
+            444,
+            542
+          ],
+          [
+            448,
+            549
+          ],
+          [
+            453,
+            556
+          ],
+          [
+            460,
+            562
+          ],
+          [
+            470,
+            568
+          ],
+          [
+            482,
+            575
+          ],
+          [
+            496,
+            581
+          ],
+          [
+            513,
+            587
+          ],
+          [
+            516,
+            587
+          ]
+        ],
+        "width": null,
+        "other_data": null
+      },
+      "user_update": 3,
+      "updated": "2022-09-21T08:24:28.796Z"
+    }
+  },
+  {
+    "model": "board.boarddata",
+    "pk": 4,
+    "fields": {
+      "board": 1,
+      "type_object": "r",
+      "data": {
+        "color": null,
+        "coord": [
+          [
+            1015,
+            614
+          ],
+          [
+            1023,
+            614
+          ],
+          [
+            1030,
+            614
+          ],
+          [
+            1036,
+            614
+          ],
+          [
+            1039,
+            613
+          ],
+          [
+            1042,
+            612
+          ],
+          [
+            1044,
+            610
+          ],
+          [
+            1047,
+            608
+          ],
+          [
+            1051,
+            605
+          ],
+          [
+            1053,
+            600
+          ],
+          [
+            1055,
+            596
+          ],
+          [
+            1058,
+            588
+          ],
+          [
+            1059,
+            580
+          ],
+          [
+            1061,
+            572
+          ],
+          [
+            1062,
+            560
+          ],
+          [
+            1062,
+            547
+          ],
+          [
+            1059,
+            531
+          ],
+          [
+            1054,
+            517
+          ],
+          [
+            1046,
+            501
+          ],
+          [
+            1038,
+            483
+          ],
+          [
+            1027,
+            465
+          ],
+          [
+            1018,
+            450
+          ],
+          [
+            1007,
+            435
+          ],
+          [
+            997,
+            420
+          ],
+          [
+            986,
+            405
+          ],
+          [
+            976,
+            392
+          ],
+          [
+            969,
+            381
+          ],
+          [
+            962,
+            369
+          ],
+          [
+            957,
+            359
+          ],
+          [
+            953,
+            350
+          ],
+          [
+            950,
+            341
+          ],
+          [
+            950,
+            340
+          ]
+        ],
+        "width": null,
+        "other_data": null
+      },
+      "user_update": 4,
+      "updated": "2022-09-21T08:24:28.796Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$sHgcW5S7OJqwpxB6w5lpuY$iJtFq+y45txjNOAO6XLsEsTBMeG/MPnEjp7z256nUP8=",
+      "last_login": "2022-09-21T08:14:41.639Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2022-09-21T08:14:17.404Z",
+      "email": "admin@admin.local",
+      "activation_key": "",
+      "is_verify": true,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$rSULVQdXceorTA7nmXGrL2$425L2b/crLRozvIgn8AnjdgkDraS7PMb7YjlhlbO1Eo=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user1",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-09-21T08:16:58.613Z",
+      "email": "user1@example.com",
+      "activation_key": "",
+      "is_verify": true,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$fYtMG5cJMyxKFIAFmqd2q0$lW7jgEH2MpcGN+yGJAy8VwhCIl6VXTBIXAg3o1fbItY=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user2",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-09-21T08:17:33.432Z",
+      "email": "user2@example.com",
+      "activation_key": "",
+      "is_verify": true,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$q39QhcALU0eCoh6UJFURBp$CaNd4v8uWbb9dy1yht+F1cphZHqhgoLmL18SSfWa+Yg=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user3",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-09-21T08:17:43.006Z",
+      "email": "user3@example.com",
+      "activation_key": "",
+      "is_verify": true,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$cNAm4KNrYBtbJiCQXSZ6jh$3kAQIOZkqYTkFzo5VlczhKhTShujlHuFIDt34cmshJY=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user4",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-09-21T08:18:29.554Z",
+      "email": "user4@example.com",
+      "activation_key": "12a4afc035a47691a437e5568105d041c85765e0",
+      "is_verify": false,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$Jzr8XL6tecbFyET8hk2Voq$LkZV7e7KQ35KVlhd+/ZYFbL9sVeFxAqZJtWwLwQqVcE=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user5",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-09-21T08:18:36.098Z",
+      "email": "user5@example.com",
+      "activation_key": "e75c922f30b5f728ffd2c548d54d280be7c72f38",
+      "is_verify": false,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 7,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$C15ryRx8XMbenHNoh8KVk0$FJ868CjQe08oyTEqpTNUNlsU8SGRA+AC7xKJKg4tiY0=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user6",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": false,
+      "date_joined": "2022-09-21T08:18:47.312Z",
+      "email": "user6@example.com",
+      "activation_key": "",
+      "is_verify": false,
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]
