@@ -67,11 +67,16 @@ class LoginApiView(ObtainAuthToken):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        data = {
+            'username': user.username,
+            'email': user.email,
+            'is_verify': user.is_verify
+        }
+        if not user.is_verify:
+            return Response(data=data, status=status.HTTP_403_FORBIDDEN)
         token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'username': f'{token.user.username}',
-            'token': f'Token {token.key}'
-        })
+        data['token'] = f'{token.key}'
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
 class LogoutApiView(APIView):
