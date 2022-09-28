@@ -24,7 +24,7 @@ class BoardListApiView(generics.ListCreateAPIView):
                 user = User.objects.filter(
                     email=email['email']).select_related().first()
                 if user:
-                    if user.email == email['email']:
+                    if self.request.user.email == email['email']:
                         continue
                     group.add(user.id)
                     email_list_register.add(email['email'])
