@@ -69,7 +69,7 @@ class TestUsersApp(APITestCase):
         user = self.user_data_no_verify()
         del user['username']
         response = self.client.post(url, data=user)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         user_db = self.get_user(user['email'])
         self.assertFalse(user_db.is_verify)
         self.assertEquals(resolve(url).func.view_class, LoginApiView)
@@ -84,9 +84,9 @@ class TestUsersApp(APITestCase):
         user = self.user_data_no_active()
         del user['username']
         response = self.client.post(url, data=user)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         user_db = self.get_user(user['email'])
-        self.assertFalse(user_db.is_verify)
+        self.assertFalse(user_db.is_active)
         self.assertEquals(resolve(url).func.view_class, LoginApiView)
         token_db = Token.objects.filter(user=user_db).first()
         token_response = response.data.get('token')
