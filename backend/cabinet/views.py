@@ -22,12 +22,9 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         data = request.data
         new_data = {
-            'username': data.get('username') if data.get(
-                'username') else request.user.username,
-            'first_name': data.get('first_name') if data.get(
-                'first_name') else request.user.first_name,
-            'last_name': data.get('last_name') if data.get(
-                'last_name') else request.user.last_name,
+            'username': data.get('username') if data.get('username') else request.user.username,
+            'first_name': data.get('first_name') if 'first_name' in data else request.user.first_name,
+            'last_name': data.get('last_name') if 'Last_name' in data else request.user.last_name,
         }
         if data.get('password'):
             new_data['password'] = make_password(data.get('password'))
