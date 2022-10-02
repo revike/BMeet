@@ -1,8 +1,6 @@
 import hashlib
 from random import random
 
-from django.db import IntegrityError
-
 from board.models import NoRegisterUser, Board
 from users.tasks import send_verify_mail, set_hash_password
 from rest_framework.authtoken.models import Token

@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import generics, status
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -21,13 +22,27 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         data = request.data
+        user = request.user
         new_data = {
-            'username': data.get('username') if data.get('username') else request.user.username,
-            'first_name': data.get('first_name') if 'first_name' in data else request.user.first_name,
-            'last_name': data.get('last_name') if 'last_name' in data else request.user.last_name,
+            'username': data.get(
+                'username') if 'username' in data else user.username,
+            'first_name': data.get(
+                'first_name') if 'first_name' in data else user.first_name,
+            'last_name': data.get(
+                'last_name') if 'last_name' in data else user.last_name,
         }
+
+        def update_token(request_user):
+            """Обновление токена"""
+            request_user.auth_token.delete()
+            new_token = Token.objects.create(user=request_user)
+            new_data['token'] = new_token
+
+        if data.get('username'):
+            update_token(user)
         if data.get('password'):
             new_data['password'] = make_password(data.get('password'))
+            update_token(user)
         if data.get('email'):
             user = self.request.user
             if user.email != data.get('email'):
