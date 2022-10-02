@@ -13,8 +13,8 @@ class BoardListApiView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         author = self.request.user
-        email_list_no_register = []
-        email_list_register = []
+        email_list_no_register = set()
+        email_list_register = set()
         group = {author}
         group_data = self.request.data.get('group')
         if group_data:
@@ -24,10 +24,12 @@ class BoardListApiView(generics.ListCreateAPIView):
                 user = User.objects.filter(
                     email=email['email']).select_related().first()
                 if user:
+                    if self.request.user.email == email['email']:
+                        continue
                     group.add(user.id)
-                    email_list_register.append(email['email'])
+                    email_list_register.add(email['email'])
                 else:
-                    email_list_no_register.append(email['email'])
+                    email_list_no_register.add(email['email'])
 
         serializer.save(author=author, group=group)
 
