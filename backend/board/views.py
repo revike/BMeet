@@ -7,7 +7,7 @@ from users.models import User
 
 
 class BoardListApiView(generics.ListCreateAPIView):
-    """Список досок"""
+    """Список и создание досок"""
     serializer_class = BoardSerializer
     pagination_class = None
 
@@ -45,3 +45,18 @@ class BoardListApiView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Board.objects.filter(is_active=True, group=self.request.user)
+
+
+class BoardDeleteApiView(generics.DestroyAPIView):
+    """Удаление досок"""
+
+    def get_queryset(self):
+        return Board.objects.filter(is_active=True, group=self.request.user)
+    
+    def perform_destroy(self, instance):
+        user = self.request.user
+        if user == instance.author:
+            instance.is_active = False
+        elif user in instance.group.all():
+            instance.group.remove(user)
+        instance.save()
