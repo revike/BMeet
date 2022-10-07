@@ -45,6 +45,7 @@ class Board(models.Model):
         db_table = 'board'
         verbose_name = 'Доска'
         verbose_name_plural = 'Доски'
+        ordering = ['id']
 
 
 class BoardData(models.Model):
