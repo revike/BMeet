@@ -1,6 +1,6 @@
 from rest_framework import generics
 
-from board.models import Board
+from board.models import Board, NoRegisterUser
 from board.serializers import BoardSerializer
 from board.utils import AddUserBoardMixin
 
@@ -29,7 +29,10 @@ class BoardUpdateApiView(AddUserBoardMixin, generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         board = self.get_object()
-        email_black_list = {i.email for i in board.group.all()}
+        no_register_users = NoRegisterUser.objects.filter(board=board)
+        email_black_list_user = {i.email for i in board.group.all()}
+        email_black_list_no_reg = {i.email for i in no_register_users}
+        email_black_list = email_black_list_user ^ email_black_list_no_reg
         email_list_register, email_list_no_register = self.save_serializer(
             self.request, serializer)
         self.sending_newsletter(serializer, email_list_register,
