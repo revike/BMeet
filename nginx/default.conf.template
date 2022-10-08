@@ -11,6 +11,11 @@ server {
         proxy_pass   http://frontend:80;
     }
 
+    location /board_management {
+        proxy_pass   http://frontend:80;
+        add_header Cache-Control no-cache;
+    }
+
     location /static_back/ {
         root /usr/share/nginx/html;
     }
