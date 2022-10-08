@@ -35,14 +35,13 @@ class BoardSerializer(serializers.ModelSerializer):
     """Сериализатор доски"""
     author = AuthorSerializer(required=False)
     group = GroupSerializer(many=True, required=False)
-    group_no_register = serializers.SerializerMethodField('get_no_register')
+    group_no_register = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
         fields = '__all__'
 
-    @classmethod
-    def get_no_register(cls, board):
+    def get_group_no_register(self, board):
         """Получение незарегистрированных email"""
         return [{'email': i.email} for i in
                 NoRegisterUser.objects.filter(board=board)]

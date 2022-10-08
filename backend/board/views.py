@@ -11,8 +11,9 @@ class BoardListApiView(AddUserBoardMixin, generics.ListCreateAPIView):
     pagination_class = None
 
     def perform_create(self, serializer):
+        group_data = self.request.data.get('group')
         email_list_register, email_list_no_register = self.save_serializer(
-            self.request, serializer)
+            self.request, serializer, group_data)
         self.sending_newsletter(serializer, email_list_register,
                                 email_list_no_register)
 
@@ -28,13 +29,22 @@ class BoardUpdateApiView(AddUserBoardMixin, generics.UpdateAPIView):
         return Board.objects.filter(is_active=True, author=self.request.user)
 
     def perform_update(self, serializer):
+        group_data = self.request.data.get('group')
+
         board = self.get_object()
-        no_register_users = NoRegisterUser.objects.filter(board=board)
         email_black_list_user = {i.email for i in board.group.all()}
+
+        no_register_users = NoRegisterUser.objects.filter(board=board)
         email_black_list_no_reg = {i.email for i in no_register_users}
+
+        email_delete_no_reg = email_black_list_no_reg - {i['email'] for i in
+                                                         group_data}
+        NoRegisterUser.objects.filter(email__in=email_delete_no_reg,
+                                      board=board).delete()
+
         email_black_list = email_black_list_user ^ email_black_list_no_reg
         email_list_register, email_list_no_register = self.save_serializer(
-            self.request, serializer)
+            self.request, serializer, group_data)
         self.sending_newsletter(serializer, email_list_register,
                                 email_list_no_register, email_black_list)
 
