@@ -8,13 +8,12 @@ class AddUserBoardMixin:
     """Mixin для оповещения пользователя о приглашение в группу"""
 
     @staticmethod
-    def save_serializer(request, serializer):
+    def save_serializer(request, serializer, group_data):
         """Сохранение данных в базе"""
         author = request.user
         email_list_no_register = set()
         email_list_register = set()
         group = {author}
-        group_data = request.data.get('group')
         if group_data:
             GroupSerializer(data=group_data, many=True).is_valid(
                 raise_exception=True)
