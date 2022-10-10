@@ -58,6 +58,7 @@ class BoardDeleteApiView(generics.DestroyAPIView):
     def perform_destroy(self, instance):
         user = self.request.user
         if user == instance.author:
+            [i.delete() for i in NoRegisterUser.objects.filter(board=instance)]
             instance.is_active = False
         elif user in instance.group.all():
             instance.group.remove(user)
