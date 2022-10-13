@@ -64,3 +64,11 @@ class BoardDeleteApiView(generics.DestroyAPIView):
         elif user in instance.group.all():
             instance.group.remove(user)
         instance.save()
+
+
+class BoardDetailApiView(generics.RetrieveAPIView):
+    """Детали доски"""
+    serializer_class = BoardSerializer
+
+    def get_queryset(self):
+        return Board.objects.filter(is_active=True, group=self.request.user)
