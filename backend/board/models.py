@@ -79,6 +79,10 @@ class BoardData(models.Model):
         auto_now=True,
         verbose_name='обновлено',
     )
+    created = models.DateTimeField(
+        auto_now=True,
+        verbose_name='обновлено',
+    )
 
     def __str__(self):
         return f'{self.board.name}'
@@ -102,7 +106,7 @@ class BoardDataBasket(models.Model):
         on_delete=models.CASCADE,
         verbose_name='доска',
     )
-    type = models.CharField(
+    type_object = models.CharField(
         max_length=1,
         choices=TYPE_CHOICES,
         verbose_name='тип объекта',
@@ -119,6 +123,10 @@ class BoardDataBasket(models.Model):
     updated = models.DateTimeField(
         auto_now=True,
         verbose_name='обновлено',
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='создано',
     )
 
     def __str__(self):
