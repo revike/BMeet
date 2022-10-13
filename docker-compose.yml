@@ -66,27 +66,27 @@ services:
       - db
       - redis
 
-#  frontend:
-#    build:
-#      context: ./frontend/
-#      dockerfile: Dockerfile
-#    ports:
-#      - "3000:80"
-#    container_name: frontend
-#    depends_on:
-#      - web
-#
-#  nginx:
-#    image: nginx:stable-alpine
-#    container_name: nginx
-#    ports:
-#      - "80:80"
-#    depends_on:
-#      - web
-#      - frontend
-#    volumes:
-#      - ./nginx:/etc/nginx/templates
-#      - ./backend/static_back:/usr/share/nginx/html/static_back
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    container_name: frontend
+    depends_on:
+      - web
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+      - frontend
+    volumes:
+      - ./nginx:/etc/nginx/templates
+      - ./backend/static_back:/usr/share/nginx/html/static_back
 
 volumes:
   pg_data:
