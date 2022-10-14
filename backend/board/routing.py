@@ -4,8 +4,7 @@ from .consumers import BoardConsumer
 from .middleware import TokenAuthMiddleware
 
 websockets = TokenAuthMiddleware(
-                URLRouter([
-                    path("api/board/<int:board_id>/", BoardConsumer.as_asgi()),
-                ])
+    URLRouter([
+        path("api/board/<int:board_id>/", BoardConsumer.as_asgi()),
+    ])
 )
-
