@@ -1,19 +1,20 @@
 from django.core.exceptions import ObjectDoesNotExist
-
 from .models import Board, BoardData, BoardDataBasket
-from users.models import User
 
 
-def get_board(board_id):
-    """Получение доски по id"""
-    author = User.objects.get(pk=1)
-    board = Board.objects.get_or_create(pk=board_id, defaults={'author': author})
-    return board
+def has_access(board_id, user):
+    """Проверка имеет ли право пользователь user подключится к доске board_id"""
+    try:
+        board = Board.objects.get(pk=board_id)
+        if user in board.group.all():
+            return True
+    except ObjectDoesNotExist:
+        return False
+    return False
 
 
 def board_to_json(board_id, user_id):
     """Получение списка всех объектов доски по id доски в формате json"""
-    get_board(board_id)
     board_data = BoardData.objects.filter(board=board_id).order_by('id')
     redo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
     undo_object = BoardData.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
