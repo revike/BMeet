@@ -44,7 +44,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def get_board_data(self):
-        payload = board_to_json(board_id=self.board_id)
+        payload = board_to_json(board_id=self.board_id, user_id=self.user.pk)
         return payload
 
     @database_sync_to_async
