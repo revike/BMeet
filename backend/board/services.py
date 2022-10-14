@@ -11,17 +11,22 @@ def get_board(board_id):
     return board
 
 
-def board_to_json(board_id):
+def board_to_json(board_id, user_id):
     """Получение списка всех объектов доски по id доски в формате json"""
     get_board(board_id)
     board_data = BoardData.objects.filter(board=board_id).order_by('id')
-    redo_objects = BoardDataBasket.objects.filter(board=board_id).order_by('id')
+    redo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
+    undo_object = BoardData.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
     return {"objects": [board_obj_to_json(obj) for obj in board_data],
-            "redo_objects": [board_obj_to_json(obj) for obj in redo_objects]}
+            "redo_object": board_obj_to_json(redo_object),
+            "undo_object": board_obj_to_json(undo_object),
+            }
 
 
 def board_obj_to_json(board_obj):
     """Получение данных в формате json"""
+    if board_obj is None:
+        return {}
     type_object = str(board_obj.type_object)
     user = str(board_obj.user_update.username)
     return {"type": type_object, **board_obj.data, "id": str(board_obj.pk), "user": user}
