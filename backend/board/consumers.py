@@ -14,7 +14,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         self.user = self.scope['user']
         await self.accept()
         if not await self.has_access():
-            await self.close(code=4004)
+            await self.close(code=4003)
             return
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.send_initial_data()
