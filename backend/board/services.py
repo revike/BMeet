@@ -5,7 +5,7 @@ from .models import Board, BoardData, BoardDataBasket
 def has_access(board_id, user):
     """Проверка имеет ли право пользователь user подключится к доске board_id"""
     try:
-        board = Board.objects.get(pk=board_id)
+        board = Board.objects.get(pk=board_id, is_active=True)
         if user in board.group.all():
             return True
     except ObjectDoesNotExist:
