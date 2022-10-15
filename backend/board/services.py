@@ -1,11 +1,20 @@
 from django.core.exceptions import ObjectDoesNotExist
+from quopri import decodestring
 from .models import Board, BoardData, BoardDataBasket
+
+
+def decode_query_string_value(value):
+    """Декодирование строки запроса"""
+    value_bytes = bytes(value.replace('%', '=').replace("+", " "), 'UTF-8')
+    value_decode_str = decodestring(value_bytes)
+    return value_decode_str.decode('UTF-8')
 
 
 def has_access(board_id, user, board_name):
     """Проверка имеет ли право пользователь user подключится к доске board_id"""
     try:
         board = Board.objects.get(pk=board_id, is_active=True)
+        board_name = decode_query_string_value(board_name)
         if (user in board.group.all()) and (board_name == board.name):
             return True
     except ObjectDoesNotExist:
