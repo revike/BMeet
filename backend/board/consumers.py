@@ -1,6 +1,6 @@
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from .services import board_to_json, add_board_obj, undo, redo
+from .services import board_to_json, add_board_obj, undo, redo, has_access
 
 
 class BoardConsumer(AsyncJsonWebsocketConsumer):
@@ -13,8 +13,17 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         self.board_id = self.scope["url_route"]["kwargs"]["board_id"]
         self.user = self.scope['user']
         await self.accept()
+        if not await self.has_access():
+            await self.close(code=4003)
+            return
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.send_initial_data()
+
+    @database_sync_to_async
+    def has_access(self):
+        board_name = (dict((x.split('=') for x in self.scope['query_string'].decode().split("&")))).get('name',
+                                                                                                             None)
+        return has_access(self.board_id, self.user, board_name)
 
     @staticmethod
     def get_group_name(board_id):
