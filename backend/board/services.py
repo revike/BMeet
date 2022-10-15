@@ -2,11 +2,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Board, BoardData, BoardDataBasket
 
 
-def has_access(board_id, user):
+def has_access(board_id, user, board_name):
     """Проверка имеет ли право пользователь user подключится к доске board_id"""
     try:
         board = Board.objects.get(pk=board_id, is_active=True)
-        if user in board.group.all():
+        if (user in board.group.all()) and (board_name == board.name):
             return True
     except ObjectDoesNotExist:
         return False
