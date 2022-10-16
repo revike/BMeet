@@ -10,9 +10,13 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         self.board_id = None
 
     async def connect(self):
-        self.board_id = self.scope["url_route"]["kwargs"]["board_id"]
-        self.user = self.scope['user']
-        await self.accept()
+        try:
+            self.board_id = self.scope["url_route"]["kwargs"]["board_id"]
+            self.user = self.scope['user']
+            await self.accept()
+        except KeyError:
+            await self.close(code=4004)
+            return
         if not await self.has_access():
             await self.close(code=4003)
             return
@@ -21,9 +25,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def has_access(self):
-        board_name = (dict((x.split('=') for x in self.scope['query_string'].decode().split("&")))).get('name',
-                                                                                                             None)
-        return has_access(self.board_id, self.user, board_name)
+        return has_access(self.board_id, self.user)
 
     @staticmethod
     def get_group_name(board_id):

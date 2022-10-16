@@ -10,12 +10,11 @@ def decode_query_string_value(value):
     return value_decode_str.decode('UTF-8')
 
 
-def has_access(board_id, user, board_name):
+def has_access(board_id, user):
     """Проверка имеет ли право пользователь user подключится к доске board_id"""
     try:
         board = Board.objects.get(pk=board_id, is_active=True)
-        board_name = decode_query_string_value(board_name)
-        if (user in board.group.all()) and (board_name == board.name):
+        if user in board.group.all():
             return True
     except ObjectDoesNotExist:
         return False
@@ -24,12 +23,14 @@ def has_access(board_id, user, board_name):
 
 def board_to_json(board_id, user_id):
     """Получение списка всех объектов доски по id доски в формате json"""
+    board = Board.objects.get(pk=board_id, is_active=True)
     board_data = BoardData.objects.filter(board=board_id).order_by('id')
     redo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
     undo_object = BoardData.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
     return {"objects": [board_obj_to_json(obj) for obj in board_data],
             "redo_object": board_obj_to_json(redo_object),
             "undo_object": board_obj_to_json(undo_object),
+            "board_name": board.name
             }
 
 
