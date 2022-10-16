@@ -3,13 +3,6 @@ from quopri import decodestring
 from .models import Board, BoardData, BoardDataBasket
 
 
-def decode_query_string_value(value):
-    """Декодирование строки запроса"""
-    value_bytes = bytes(value.replace('%', '=').replace("+", " "), 'UTF-8')
-    value_decode_str = decodestring(value_bytes)
-    return value_decode_str.decode('UTF-8')
-
-
 def has_access(board_id, user):
     """Проверка имеет ли право пользователь user подключится к доске board_id"""
     try:
