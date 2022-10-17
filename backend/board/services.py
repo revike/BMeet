@@ -60,8 +60,10 @@ def add_board_obj(board_id, object_data, user_id):
         user_update=user_id,
     )
     obj.save()
-    add_board_obj_basket(board_obj=obj, type_object_action='u')
-    return obj
+    undo_obj = add_board_obj_basket(board_obj=obj, type_object_action='u')
+    undo_obj = board_obj_to_json(undo_obj)
+    obj = board_obj_to_json(obj)
+    return obj, undo_obj
 
 
 def undo(board_obj):

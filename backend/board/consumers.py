@@ -60,8 +60,8 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def add_object(self, object_data):
-        obj = add_board_obj(self.board_id, object_data, self.user)
-        return obj.pk
+        obj, undo_obj = add_board_obj(self.board_id, object_data, self.user)
+        return obj, undo_obj
 
     @database_sync_to_async
     def undo_object(self, board_obj):
@@ -86,15 +86,13 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
             await self.redo_object(content)
             await self.send_update_board_data()
         else:
-            board_obj = await self.add_object(content)
-            content["id"] = str(board_obj)
-            content["user"] = str(self.user.username)
+            board_obj, undo_obj = await self.add_object(content)
             await self.channel_layer.group_send(
                 self.group_name,
                 {
                     "type": "send_board_objects",
                     "content": {"type": "ADD_OBJECT",
-                                "data": {"objects": [content]}},
+                                "data": {"objects": [board_obj],  "undo_object": undo_obj}},
                 },
             )
 
