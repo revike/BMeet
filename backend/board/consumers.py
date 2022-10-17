@@ -1,6 +1,6 @@
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from .services import board_to_json, add_board_obj, undo, redo, has_access
+from .services import board_to_json, add_board_obj, undo, redo, has_access, delete_board_data_basket_objects
 
 
 class BoardConsumer(AsyncJsonWebsocketConsumer):
@@ -39,7 +39,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_initial_data(self):
         payload = await self.get_board_data()
-        return await self.send_json({"type": "INITIAL_DATA", "data": payload})
+        return await self.send_json({"type": "UPDATE_BOARD", "data": payload})
 
     async def send_update_board_data(self):
         payload = await self.get_board_data()
@@ -71,6 +71,10 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
     def redo_object(self, board_obj):
         redo(board_obj)
 
+    @database_sync_to_async
+    def delete_board_data_basket_objects(self):
+        delete_board_data_basket_objects(self.board_id, self.user)
+
     async def send_board_objects(self, event):
         await self.send_json(event['content'])
 
@@ -93,3 +97,6 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
                                 "data": {"objects": [content]}},
                 },
             )
+
+    async def disconnect(self, code):
+        await self.delete_board_data_basket_objects()
