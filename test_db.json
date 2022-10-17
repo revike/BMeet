@@ -130,7 +130,7 @@
       "is_active": true,
       "date_joined": "2022-09-21T08:16:58.613Z",
       "email": "user1@example.com",
-      "activation_key": "12a4afc035a47691a437e5568105d041c85765e0",
+      "activation_key": "",
       "is_verify": true,
       "groups": [],
       "user_permissions": []
