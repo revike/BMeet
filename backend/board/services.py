@@ -1,5 +1,4 @@
 from django.core.exceptions import ObjectDoesNotExist
-from quopri import decodestring
 from .models import Board, BoardData, BoardDataBasket
 
 
@@ -16,14 +15,14 @@ def has_access(board_id, user):
 
 def board_to_json(board_id, user_id):
     """Получение списка всех объектов доски по id доски в формате json"""
-    board = Board.objects.get(pk=board_id, is_active=True)
     board_data = BoardData.objects.filter(board=board_id).order_by('id')
-    redo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
-    undo_object = BoardData.objects.filter(board=board_id, user_update=user_id).order_by('-id').first()
+    redo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id, type_object_action='r').order_by(
+        'id').first()
+    undo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id, type_object_action='u').order_by(
+        '-id').first()
     return {"objects": [board_obj_to_json(obj) for obj in board_data],
             "redo_object": board_obj_to_json(redo_object),
             "undo_object": board_obj_to_json(undo_object),
-            "board_name": board.name
             }
 
 
@@ -36,33 +35,48 @@ def board_obj_to_json(board_obj):
     return {"type": type_object, **board_obj.data, "id": str(board_obj.pk), "user": user}
 
 
+def add_board_obj_basket(board_obj, type_object_action):
+    """Добавление объекта доски в BardDataBasket"""
+    obj = BoardDataBasket(
+        board_id=board_obj.board_id,
+        type_object=board_obj.type_object,
+        data=board_obj.data,
+        user_update=board_obj.user_update,
+        temp_id=board_obj.pk,
+        type_object_action=type_object_action
+    )
+    obj.save()
+    return obj
+
+
 def add_board_obj(board_id, object_data, user_id):
-    """Добавление объекта доски в БД"""
+    """Добавление объекта доски в BardData"""
     object_data = {**object_data}
+    type_object = object_data.pop("type")
     obj = BoardData(
         board_id=board_id,
-        type_object=object_data.pop("type"),
+        type_object=type_object,
         data=object_data,
         user_update=user_id,
     )
     obj.save()
-    return obj
+    undo_obj = add_board_obj_basket(board_obj=obj, type_object_action='u')
+    undo_obj = board_obj_to_json(undo_obj)
+    obj = board_obj_to_json(obj)
+    return obj, undo_obj
 
 
 def undo(board_obj):
     """Обработка отмены действия на доске. Удаление объекта из BoardData  добавление этого объекта
      в BoardDataBasket"""
     try:
-        object = BoardData.objects.get(id=int(board_obj['data']['id']))
-        temp_object = BoardDataBasket(
-            board_id=object.board_id,
-            type_object=object.type_object,
-            data=object.data,
-            user_update=object.user_update,
-        )
-        temp_object.save()
+        temp_object = BoardDataBasket.objects.get(id=int(board_obj['data']['id']))
+        object = BoardData.objects.filter(id=temp_object.temp_id)
         object.delete()
-    except (TypeError, ObjectDoesNotExist, KeyError):
+        temp_object.type_object_action = 'r'
+        temp_object.temp_id = False
+        temp_object.save()
+    except (TypeError, ObjectDoesNotExist, KeyError, AttributeError):
         pass
 
 
@@ -71,13 +85,13 @@ def redo(board_obj):
     BoardData """
     try:
         temp_object = BoardDataBasket.objects.get(id=int(board_obj['data']['id']))
-        object = BoardData(
-            board_id=temp_object.board_id,
-            type_object=temp_object.type_object,
-            data=temp_object.data,
-            user_update=temp_object.user_update,
-        )
-        object.save()
+        temp_object.data["type"] = temp_object.type_object
+        add_board_obj(board_id=temp_object.board_id, object_data=temp_object.data,
+                      user_id=temp_object.user_update)
         temp_object.delete()
-    except (TypeError, ObjectDoesNotExist, KeyError):
+    except (TypeError, ObjectDoesNotExist, KeyError, AttributeError):
         pass
+
+
+def delete_board_data_basket_objects(board_id, user):
+    BoardDataBasket.objects.filter(user_update=user, board_id=board_id).delete()

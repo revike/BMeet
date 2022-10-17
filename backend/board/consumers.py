@@ -1,6 +1,6 @@
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from .services import board_to_json, add_board_obj, undo, redo, has_access
+from .services import board_to_json, add_board_obj, undo, redo, has_access, delete_board_data_basket_objects
 
 
 class BoardConsumer(AsyncJsonWebsocketConsumer):
@@ -39,7 +39,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_initial_data(self):
         payload = await self.get_board_data()
-        return await self.send_json({"type": "INITIAL_DATA", "data": payload})
+        return await self.send_json({"type": "UPDATE_BOARD", "data": payload})
 
     async def send_update_board_data(self):
         payload = await self.get_board_data()
@@ -60,8 +60,8 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def add_object(self, object_data):
-        obj = add_board_obj(self.board_id, object_data, self.user)
-        return obj.pk
+        obj, undo_obj = add_board_obj(self.board_id, object_data, self.user)
+        return obj, undo_obj
 
     @database_sync_to_async
     def undo_object(self, board_obj):
@@ -70,6 +70,10 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
     @database_sync_to_async
     def redo_object(self, board_obj):
         redo(board_obj)
+
+    @database_sync_to_async
+    def delete_board_data_basket_objects(self):
+        delete_board_data_basket_objects(self.board_id, self.user)
 
     async def send_board_objects(self, event):
         await self.send_json(event['content'])
@@ -82,14 +86,15 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
             await self.redo_object(content)
             await self.send_update_board_data()
         else:
-            board_obj = await self.add_object(content)
-            content["id"] = str(board_obj)
-            content["user"] = str(self.user.username)
+            board_obj, undo_obj = await self.add_object(content)
             await self.channel_layer.group_send(
                 self.group_name,
                 {
                     "type": "send_board_objects",
                     "content": {"type": "ADD_OBJECT",
-                                "data": {"objects": [content]}},
+                                "data": {"objects": [board_obj],  "undo_object": undo_obj}},
                 },
             )
+
+    async def disconnect(self, code):
+        await self.delete_board_data_basket_objects()
