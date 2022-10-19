@@ -85,6 +85,8 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         elif content.get('method') == 'redo':
             await self.redo_object(content)
             await self.send_update_board_data()
+        elif content.get('method') == 'resize':
+            await self.send_update_board_data()
         else:
             board_obj, undo_obj = await self.add_object(content)
             await self.channel_layer.group_send(
