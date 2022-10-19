@@ -8,6 +8,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.user = None
         self.board_id = None
+        self.delete_obj_basket = True
 
     async def connect(self):
         try:
@@ -85,6 +86,8 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         elif content.get('method') == 'redo':
             await self.redo_object(content)
             await self.send_update_board_data()
+        elif content.get('method') == 'resize':
+            self.delete_obj_basket = False
         else:
             board_obj, undo_obj = await self.add_object(content)
             await self.channel_layer.group_send(
@@ -97,4 +100,5 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
             )
 
     async def disconnect(self, code):
-        await self.delete_board_data_basket_objects()
+        if self.delete_obj_basket:
+            await self.delete_board_data_basket_objects()
