@@ -64,3 +64,4 @@ wcwidth==0.2.5
 websockets==10.3
 wrapt==1.14.1
 zope.interface==5.4.0
+django-silk==5.0.1
