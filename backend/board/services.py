@@ -6,7 +6,7 @@ from .models import Board, BoardData, BoardDataBasket
 def has_access(board_id, user):
     """Проверка имеет ли право пользователь user подключится к доске board_id"""
     try:
-        board = Board.objects.get(pk=board_id, is_active=True)
+        board = Board.objects.prefetch_related('group').get(pk=board_id, is_active=True)
         if user in board.group.all():
             return True
     except ObjectDoesNotExist:
@@ -16,7 +16,7 @@ def has_access(board_id, user):
 
 def board_to_json(board_id, user_id):
     """Получение списка всех объектов доски по id доски в формате json"""
-    board_data = BoardData.objects.filter(board=board_id).order_by('id')
+    board_data = BoardData.objects.select_related('user_update').filter(board=board_id).order_by('id')
     objects = BoardDataBasket.objects.select_related('user_update').filter(board=board_id, user_update=user_id)
     redo_object = objects.filter(type_object_action='r').order_by('id').first()
     undo_object = objects.filter(type_object_action='u').order_by('-id').first()
