@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+
 from .models import Board, BoardData, BoardDataBasket
 
 
@@ -16,10 +17,9 @@ def has_access(board_id, user):
 def board_to_json(board_id, user_id):
     """Получение списка всех объектов доски по id доски в формате json"""
     board_data = BoardData.objects.filter(board=board_id).order_by('id')
-    redo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id, type_object_action='r').order_by(
-        'id').first()
-    undo_object = BoardDataBasket.objects.filter(board=board_id, user_update=user_id, type_object_action='u').order_by(
-        '-id').first()
+    objects = BoardDataBasket.objects.select_related('user_update').filter(board=board_id, user_update=user_id)
+    redo_object = objects.filter(type_object_action='r').order_by('id').first()
+    undo_object = objects.filter(type_object_action='u').order_by('-id').first()
     return {"objects": [board_obj_to_json(obj) for obj in board_data],
             "redo_object": board_obj_to_json(redo_object),
             "undo_object": board_obj_to_json(undo_object),
@@ -94,4 +94,4 @@ def redo(board_obj):
 
 
 def delete_board_data_basket_objects(board_id, user):
-    BoardDataBasket.objects.filter(user_update=user, board_id=board_id).delete()
+    BoardDataBasket.objects.select_related('user_update').filter(user_update=user, board_id=board_id).delete()
