@@ -196,3 +196,22 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 # Documentation API
 BASE_URL_DOCUMENTATION_API = env('BASE_URL_DOCUMENTATION_API')
+
+
+# #лог базы данных в консоль
+# if DEBUG:
+#     LOGGING = {
+#         'version': 1,
+#         'disable_existing_loggers': False,
+#         'handlers': {
+#             'console': {
+#                 'class': 'logging.StreamHandler',
+#             },
+#         },
+#         'loggers': {
+#             'django.db.backends': {
+#                 'level': 'DEBUG',
+#                 'handlers': ['console']
+#             }
+#         }
+#     }
