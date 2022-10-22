@@ -18,7 +18,7 @@ class BoardListApiView(AddUserBoardMixin, generics.ListCreateAPIView):
                                 email_list_no_register)
 
     def get_queryset(self):
-        return Board.objects.filter(is_active=True, group=self.request.user)
+        return Board.objects.prefetch_related('group').filter(is_active=True, group=self.request.user)
 
 
 class BoardUpdateApiView(AddUserBoardMixin, generics.UpdateAPIView):
@@ -53,12 +53,12 @@ class BoardDeleteApiView(generics.DestroyAPIView):
     """Удаление досок"""
 
     def get_queryset(self):
-        return Board.objects.filter(is_active=True, group=self.request.user)
+        return Board.objects.prefetch_related('group').filter(is_active=True, group=self.request.user)
 
     def perform_destroy(self, instance):
         user = self.request.user
         if user == instance.author:
-            no_register_users = NoRegisterUser.objects.filter(board=instance)
+            no_register_users = NoRegisterUser.objects.select_related('board').filter(board=instance)
             [i.delete() for i in no_register_users]
             instance.is_active = False
         elif user in instance.group.all():
