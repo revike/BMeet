@@ -13,6 +13,12 @@ class RegisterModelSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'password')
 
+    def validate_email(self, value):
+        norm_email = value.lower()
+        if User.objects.filter(email=norm_email).exists():
+            raise serializers.ValidationError("Not unique email")
+        return norm_email
+
 
 class LoginSerializer(AuthTokenSerializer):
     """Сериализатор Login"""

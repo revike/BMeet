@@ -2,10 +2,15 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+class LowercaseEmailField(models.EmailField):
+    def get_prep_value(self, value):
+        return str(value).lower()
+
+
 class User(AbstractUser):
     """ Пользователь """
 
-    email = models.EmailField(
+    email = LowercaseEmailField(
         unique=True,
     )
     activation_key = models.CharField(

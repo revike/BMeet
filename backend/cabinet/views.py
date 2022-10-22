@@ -44,6 +44,7 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
             new_data['password'] = make_password(data.get('password'))
             update_token(user)
         if data.get('email'):
+            data['email'] = data['email'].lower()
             user = self.request.user
             if user.email != data.get('email'):
                 self._get_serializer(data)

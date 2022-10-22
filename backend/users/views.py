@@ -101,8 +101,8 @@ class RecoveryPasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
             key = self.generate_key(email)
             user.activation_key = key
             user.save()
-            send_recovery_mail.delay(email, key)
-            return Response(data={'email': email}, status=status.HTTP_200_OK)
+            send_recovery_mail.delay(user.email, key)
+            return Response(data={'email': user.email}, status=status.HTTP_200_OK)
         return Response(data={'Invalid': 'Email does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
