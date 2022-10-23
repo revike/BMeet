@@ -20,7 +20,6 @@ class User(AbstractUser):
                 "A user with that username already exists."),
         },
     )
-
     email = LowercaseEmailField(
         unique=True,
     )

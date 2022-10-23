@@ -7,7 +7,7 @@ import users.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0004_alter_user_is_active'),
+        ('users', '0005_alter_user_username'),
     ]
 
     operations = [
