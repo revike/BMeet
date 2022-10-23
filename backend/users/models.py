@@ -4,6 +4,11 @@ from users.validators import username_validate
 from django.utils.translation import gettext_lazy as _
 
 
+class LowercaseEmailField(models.EmailField):
+    def get_prep_value(self, value):
+        return str(value).lower()
+
+
 class User(AbstractUser):
     """ Пользователь """
 
@@ -15,8 +20,7 @@ class User(AbstractUser):
                 "A user with that username already exists."),
         },
     )
-
-    email = models.EmailField(
+    email = LowercaseEmailField(
         unique=True,
     )
     activation_key = models.CharField(

@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from users.models import User, LowercaseEmailField
 
 
 class Board(models.Model):
@@ -158,7 +158,7 @@ class NoRegisterUser(models.Model):
     """Незарегистрированные приглашенные пользователи"""
     board = models.ForeignKey('Board', on_delete=models.CASCADE, null=True,
                               verbose_name='доска')
-    email = models.EmailField(unique=False, verbose_name='email')
+    email = LowercaseEmailField(unique=False, verbose_name='email')
 
     def __str__(self):
         return f'{self.email}'
