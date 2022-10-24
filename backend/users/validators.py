@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 
-from cabinet.utils import username_check
+from cabinet.utils import username_check, password_check
 
 
 def username_validate(value):
@@ -13,10 +13,8 @@ def username_validate(value):
 
 
 def password_validate(value):
-    """Валидация username"""
-    regex = r"^[a-zA-Z_-]+[a-zA-Z0-9_-]*"
-    username_regex = re.search(regex, value)
-    if len(value) < 2 or not username_regex:
+    """Валидация password"""
+    if not password_check(value):
         raise ValidationError(
-            'Минимальная длина username 2 символа',
+            'Пароль не удовлетворяет условиям безопасности',
             params={'value': value})

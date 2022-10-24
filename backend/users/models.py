@@ -20,12 +20,10 @@ class User(AbstractUser):
                 "A user with that username already exists."),
         },
     )
-
     password = models.CharField(
         _("password"), max_length=128,
         validators=[password_validate],
     )
-
     email = LowercaseEmailField(
         unique=True,
     )
