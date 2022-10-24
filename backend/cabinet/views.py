@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -41,8 +42,11 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
         if data.get('username'):
             update_token(user)
         if data.get('password'):
-            new_data['password'] = make_password(data.get('password'))
-            update_token(user)
+            if self.check_password(data.get('password')):
+                new_data['password'] = make_password(data.get('password'))
+                update_token(user)
+            else:
+                raise ValidationError("Пароль не удовлетворяет условиям безопасности")
         if data.get('email'):
             data['email'] = data['email'].lower()
             user = self.request.user

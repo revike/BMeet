@@ -1,4 +1,5 @@
 import hashlib
+import re
 from random import random
 
 from board.models import NoRegisterUser, Board
@@ -58,3 +59,8 @@ class RegisterUserMixin:
     def generate_password():
         """Генератор пароля"""
         return hashlib.sha1(str(random()).encode('utf8')).hexdigest()[:8]
+
+    @staticmethod
+    def check_password(value):
+        reg_password = r"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s])([^\s]){8,}$"
+        return re.search(reg_password, value)

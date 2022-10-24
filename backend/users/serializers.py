@@ -1,3 +1,4 @@
+import re
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
@@ -18,6 +19,23 @@ class RegisterModelSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=norm_email).exists():
             raise serializers.ValidationError("Not unique email")
         return norm_email
+
+    def validate_password(self, value):
+        """
+            Валидация password:
+                Не менее 8 знаков
+                Одна буква верхнего регистра (A-Z)
+                Одна буква нижнего регистра (a-z)
+                Одна цифра (0-9)
+                Один специальный знак (~!@#$%^...)
+
+        """
+        reg_password = r"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s])([^\s]){8,}$"
+        is_ok = re.search(reg_password, value)
+        if not is_ok:
+            raise serializers.ValidationError("Пароль не удовлетворяет условиям безопасности")
+        return value
+        
 
 
 class LoginSerializer(AuthTokenSerializer):
