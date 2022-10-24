@@ -40,14 +40,11 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
             new_token = Token.objects.create(user=request_user)
             new_data['token'] = new_token
 
-        if username_check(data.get('username')):
+        if data.get('username') and username_check(data.get('username')):
             update_token(user)
-        if data.get('password'):
-            if password_check(data.get('password')):
-                new_data['password'] = make_password(data.get('password'))
-                update_token(user)
-            else:
-                raise ValidationError("Пароль не удовлетворяет условиям безопасности")
+        if data.get('password') and password_check(data.get('password')):
+            new_data['password'] = make_password(data.get('password'))
+            update_token(user)
         if data.get('email'):
             data['email'] = data['email'].lower()
             user = self.request.user
