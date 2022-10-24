@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from users.validators import username_validate
+from users.validators import username_validate, password_validate
 from django.utils.translation import gettext_lazy as _
 
 
@@ -19,6 +19,10 @@ class User(AbstractUser):
             "unique": _(
                 "A user with that username already exists."),
         },
+    )
+    password = models.CharField(
+        _("password"), max_length=128,
+        validators=[password_validate],
     )
     email = LowercaseEmailField(
         unique=True,

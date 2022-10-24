@@ -1,5 +1,5 @@
 import hashlib
-from random import random
+from random import random, randint
 
 from board.models import NoRegisterUser, Board
 from users.tasks import send_verify_mail, set_hash_password
@@ -56,5 +56,16 @@ class RegisterUserMixin:
 
     @staticmethod
     def generate_password():
-        """Генератор пароля"""
-        return hashlib.sha1(str(random()).encode('utf8')).hexdigest()[:8]
+        """Генератор пароля 8 символов, обязательно буквы верхнего и нижнего регистра, цифры, спецсимволы"""
+        alphas = "abcdefghijklmnopqrstuvwxyz"
+        alphas_cap = alphas.upper()
+        numbers = "12345678901234567890123456"
+        special_chars = "!_#$%^&*()_+/!#_$%^&*()_+/"
+        password_characters = [alphas, alphas_cap, numbers, special_chars]
+        new_password = ""
+        for i in range(2):
+            for j in range(4):
+                chars_used = password_characters[j]
+                char = chars_used[randint(0, 25)]
+                new_password += char
+        return new_password
