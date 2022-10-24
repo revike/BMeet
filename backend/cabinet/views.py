@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from cabinet.serializers import UserSerializer
 from cabinet.tasks import send_update_mail
+from cabinet.utils import username_check
 from users.models import User
 from users.utils import RegisterUserMixin
 
@@ -39,7 +40,7 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
             new_token = Token.objects.create(user=request_user)
             new_data['token'] = new_token
 
-        if data.get('username'):
+        if username_check(data.get('username')):
             update_token(user)
         if data.get('password'):
             if self.check_password(data.get('password')):
