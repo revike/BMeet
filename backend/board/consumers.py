@@ -95,7 +95,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
             self.delete_obj_basket = False
         else:
             board_obj, undo_obj = await self.add_object(content)
-            await delete_redo_objects()
+            await self.delete_redo_objects()
             await self.channel_layer.group_send(
                 self.group_name,
                 {

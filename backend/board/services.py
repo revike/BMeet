@@ -101,4 +101,4 @@ def delete_board_data_basket_objects(board_id, user):
 def delete_redo_objects(board_id, user):
     """Удаление redo объектов, созданных user из BoardDataBasket для доски board_id"""
     BoardDataBasket.objects.select_related('user_update').filter(user_update=user, board_id=board_id,
-                                                                 type_object='r').delete()
+                                                                 type_object_action='r').delete()
