@@ -209,7 +209,7 @@ class TestUsersApp(APITestCase):
         return {
             'username': 'user_new',
             'email': 'user_new@example.com',
-            'password': 'user',
+            'password': 'Qwerty123!',
         }
 
     @staticmethod
@@ -218,7 +218,7 @@ class TestUsersApp(APITestCase):
         return {
             'username': 'user10',
             'email': 'user10',
-            'password': 'user',
+            'password': 'Qwerty123!',
         }
 
     @staticmethod
@@ -227,7 +227,7 @@ class TestUsersApp(APITestCase):
         return {
             'username': 'user1',
             'email': 'user1@example.com',
-            'password': 'user',
+            'password': 'Qwerty123!',
         }
 
     @staticmethod
@@ -236,7 +236,7 @@ class TestUsersApp(APITestCase):
         return {
             'username': 'user4',
             'email': 'user4@example.com',
-            'password': 'user',
+            'password': 'Qwerty123!',
         }
 
     @staticmethod
@@ -245,7 +245,7 @@ class TestUsersApp(APITestCase):
         return {
             'username': 'user6',
             'email': 'user6@example.com',
-            'password': 'user',
+            'password': 'Qwerty123!',
         }
 
     @staticmethod

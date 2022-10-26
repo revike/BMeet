@@ -59,7 +59,7 @@ class TestCabinetApp(APITestCase):
                               kwargs={'username': user_db.username})
         response_get = self.client.get(url_profile)
         self.assertEqual(response_get.status_code, status.HTTP_200_OK)
-        response = self.client.patch(url_profile, data=user_new)
+        response = self.client.patch(url_profile, data=user_new, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response_get.data.get('username'),
                             response.data.get('username'))
@@ -88,7 +88,8 @@ class TestCabinetApp(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('email'), user['email'])
         url = reverse('cabinet:profile', kwargs={'username': user_db.username})
-        response = self.client.patch(url, data={'email': new_email})
+        response = self.client.patch(url, data={'email': new_email},
+                                     format='json')
         email_old = response.data.get('email')
         activation_key = self.get_user(user_db.email).activation_key
         data_kwargs = {'email': user_db.email, 'new_email': new_email,
@@ -109,7 +110,7 @@ class TestCabinetApp(APITestCase):
         return {
             'username': 'user1',
             'email': 'user1@example.com',
-            'password': 'user',
+            'password': 'Qwerty123!',
         }
 
     @staticmethod
@@ -120,7 +121,7 @@ class TestCabinetApp(APITestCase):
             'last_name': 'Petrov',
             'email': 'test@local.local',
             'username': 'IvP',
-            'password': '555qwe'
+            'password': 'Qwerty123!'
         }
 
     @staticmethod
@@ -129,7 +130,7 @@ class TestCabinetApp(APITestCase):
         return {
             'username': 'user4',
             'email': 'user4@example.com',
-            'password': 'user',
+            'password': 'Qwerty123!',
         }
 
     @staticmethod
