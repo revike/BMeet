@@ -76,12 +76,22 @@ class TestBoardApp(APITestCase):
         response = self.client.get(url_board)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         url_update = reverse('board:update', kwargs={'pk': board_db.pk})
-        response_patch = self.client.put(url_update, data=board_new, format='json')
+        response_patch = self.client.patch(url_update, data=board_new, format='json')
         self.assertEqual(response_patch.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response_patch.data.get('name'),
                             response.data.get('name'))
         self.assertNotEqual(response_patch.data.get('description'),
                             response.data.get('description'))
+
+    def test_delete_board_other_user(self):
+        """Тест удаления доски другим пользователем"""
+        user_other = self.user_verify_data_other()
+        self.login(user_other)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        url_update = reverse('board:delete', kwargs={'pk': board_db.pk})
+        response = self.client.delete(url_update)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_board_other_user(self):
         """Тест редактирования данных доски другим пользователем"""
@@ -91,7 +101,7 @@ class TestBoardApp(APITestCase):
         board_db = self.get_board(board['pk'])
         board_new = self.update_board()
         url_update = reverse('board:update', kwargs={'pk': board_db.pk})
-        response_patch = self.client.put(url_update, data=board_new, format='json')
+        response_patch = self.client.patch(url_update, data=board_new, format='json')
         self.assertEqual(response_patch.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_board_other_user(self):
@@ -104,28 +114,33 @@ class TestBoardApp(APITestCase):
         response_patch = self.client.get(url_board)
         self.assertEqual(response_patch.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_board_other_user(self):
-        """Тест удаления доски другим пользователем"""
-        user_other = self.user_verify_data_other()
-        self.login(user_other)
-        board = self.created_board()
-        board_db = self.get_board(board['pk'])
-        url_update = reverse('board:delete', kwargs={'pk': board_db.pk})
-        response = self.client.delete(url_update)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_delete_board(self):
+    def test_delete_board_is_active(self):
         """Тест удаления доски пользователем"""
         user = self.user_verify_data()
         self.login(user)
         board = self.created_board()
         board_db = self.get_board(board['pk'])
+        board_new = self.is_active_false_board()
         url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
         response = self.client.get(url_board)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        url_delete = reverse('board:delete', kwargs={'pk': board_db.pk})
-        response = self.client.delete(url_delete)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        url_update = reverse('board:update', kwargs={'pk': board_db.pk})
+        response_patch = self.client.patch(url_update, data=board_new, format='json')
+        self.assertEqual(response_patch.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response_patch.data.get('is_active'),
+                            response.data.get('is_active'))
+
+    def test_delete_is_active_board_other_user(self):
+        """Тест удаления доски другим пользователем"""
+        user_other = self.user_verify_data_other()
+        self.login(user_other)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data.get('is_active'),
+                         response.data.get('is_active'))
 
     def test_data_delete_board(self):
         """Тест получения доступа к удаленной доске пользователем"""
@@ -152,7 +167,7 @@ class TestBoardApp(APITestCase):
         return {
             'username': 'user1',
             'email': 'user1@example.com',
-            'password': 'Qwerty123!',
+            'password': 'Qwerty123!'
         }
 
     @staticmethod
@@ -183,7 +198,22 @@ class TestBoardApp(APITestCase):
             'description': 'desc',
             'group': [
                 3
-            ]
+            ],
+            'is_active': True
+        }
+
+    @staticmethod
+    def created_board_group():
+        """Описание доски с приглашенными пользователями"""
+        return {
+            'pk': 7,
+            'author': 3,
+            'name': 'boarddd',
+            "description": "booooard",
+            'group': [
+                3, 2
+            ],
+            'is_active': True
         }
 
     @staticmethod
@@ -205,6 +235,13 @@ class TestBoardApp(APITestCase):
         return {
             'name': 'my_board',
             'description': 'boards'
+        }
+
+    @staticmethod
+    def is_active_false_board():
+        """Удаление доски"""
+        return {
+            'is_active': False
         }
 
     @staticmethod
