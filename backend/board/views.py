@@ -36,11 +36,12 @@ class BoardUpdateApiView(AddUserBoardMixin, generics.UpdateAPIView):
 
         no_register_users = NoRegisterUser.objects.filter(board=board)
         email_black_list_no_reg = {i.email for i in no_register_users}
+        if group_data:
+            email_delete_no_reg = email_black_list_no_reg - {i['email'] for i in
+                                                             group_data}
+            NoRegisterUser.objects.filter(email__in=email_delete_no_reg,
+                                          board=board).delete()
 
-        email_delete_no_reg = email_black_list_no_reg - {i['email'] for i in
-                                                         group_data}
-        NoRegisterUser.objects.filter(email__in=email_delete_no_reg,
-                                      board=board).delete()
 
         email_black_list = email_black_list_user ^ email_black_list_no_reg
         email_list_register, email_list_no_register = self.save_serializer(
