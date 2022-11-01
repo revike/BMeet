@@ -50,7 +50,8 @@ class TestBoardApp(APITestCase):
         response = self.client.get(url_board)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('name'), board_db.name)
-        self.assertEqual(response.data.get('description'), board_db.description)
+        self.assertEqual(response.data.get('description'),
+                         board_db.description)
         groups = response.data.get('group')
         self.assertEqual(groups[0]['email'], board_db.group.first().email)
         url_board = reverse('board:board_detail', kwargs={'pk': 12345})
@@ -76,12 +77,22 @@ class TestBoardApp(APITestCase):
         response = self.client.get(url_board)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         url_update = reverse('board:update', kwargs={'pk': board_db.pk})
-        response_patch = self.client.patch(url_update, data=board_new, format='json')
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
         self.assertEqual(response_patch.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response_patch.data.get('name'),
                             response.data.get('name'))
         self.assertNotEqual(response_patch.data.get('description'),
                             response.data.get('description'))
+        self.assertNotEqual(response_patch.data.get('group'),
+                            response.data.get('group'))
+        response = self.client.get(url_board)
+        self.assertEqual(response_patch.data.get('name'),
+                            response.data.get('name'))
+        self.assertEqual(response_patch.data.get('description'),
+                            response.data.get('description'))
+        self.assertEqual(response_patch.data.get('group'),
+                            response.data.get('group'))
 
     def test_delete_board_other_user(self):
         """Тест удаления доски другим пользователем"""
@@ -101,7 +112,8 @@ class TestBoardApp(APITestCase):
         board_db = self.get_board(board['pk'])
         board_new = self.update_board()
         url_update = reverse('board:update', kwargs={'pk': board_db.pk})
-        response_patch = self.client.patch(url_update, data=board_new, format='json')
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
         self.assertEqual(response_patch.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_board_other_user(self):
@@ -125,7 +137,8 @@ class TestBoardApp(APITestCase):
         response = self.client.get(url_board)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         url_update = reverse('board:update', kwargs={'pk': board_db.pk})
-        response_patch = self.client.patch(url_update, data=board_new, format='json')
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
         self.assertEqual(response_patch.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response_patch.data.get('is_active'),
                             response.data.get('is_active'))
@@ -234,7 +247,11 @@ class TestBoardApp(APITestCase):
         """Редактирование доски"""
         return {
             'name': 'my_board',
-            'description': 'boards'
+            'description': 'boards',
+            'group': [
+                {'email': 'user1@example.com'},
+                {'email': 'user3@example.com'}
+            ]
         }
 
     @staticmethod
