@@ -75,7 +75,7 @@ class LoginApiView(ObtainAuthToken):
             return Response(data={'BAD_REQUEST'}, status=status.HTTP_400_BAD_REQUEST)
         if check_ban.status is True and check_ban.time_unblock > timezone.now():
             return Response(data={
-                f'Ваш ip временно заблокирован. До разблокировки '
+                f'Ваш ip временно заблокирован из за превышения попыток ввода пароля . До разблокировки '
                 f'{(str(check_ban.time_unblock - timezone.now()).split(".")[0])}'},
                 status=status.HTTP_429_TOO_MANY_REQUESTS)
         elif check_ban.status is True and check_ban.time_unblock < timezone.now():
@@ -129,12 +129,6 @@ class RecoveryPasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
             user.activation_key = key
             user.save()
             send_recovery_mail.delay(user.email, key)
-            user_ip = request.META['REMOTE_ADDR']
-            update_ban_serializer = TemporaryBanIpSerializer(
-                data={'ip_address': user_ip}
-            )
-            if update_ban_serializer.is_valid():
-                update_ban_serializer.delete_ip()
             return Response(data={'email': user.email}, status=status.HTTP_200_OK)
         return Response(data={'Invalid': 'Email does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -155,6 +149,13 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
             user.save()
             data = self.active_user(user)
             send_new_password.delay(user.username, user.email, password)
+            # если есть блокировка ip удаляем
+            user_ip = request.META['REMOTE_ADDR']
+            update_ban_serializer = TemporaryBanIpSerializer(
+                data={'ip_address': user_ip}
+            )
+            if update_ban_serializer.is_valid():
+                update_ban_serializer.delete_ip()
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Activation key': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
