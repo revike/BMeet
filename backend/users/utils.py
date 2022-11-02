@@ -2,6 +2,7 @@ import hashlib
 from random import random, randint
 
 from board.models import NoRegisterUser, Board
+from users.serializers import TemporaryBanIpSerializer
 from users.tasks import send_verify_mail, set_hash_password
 from rest_framework.authtoken.models import Token
 
@@ -69,3 +70,11 @@ class RegisterUserMixin:
                 char = chars_used[randint(0, 25)]
                 new_password += char
         return new_password
+
+    @staticmethod
+    def delete_ip_from_temporary_ban(user_ip):
+        update_ban_serializer = TemporaryBanIpSerializer(
+            data={'ip_address': user_ip}
+        )
+        if update_ban_serializer.is_valid():
+            update_ban_serializer.delete_ip()
