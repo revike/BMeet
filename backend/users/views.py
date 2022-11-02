@@ -1,4 +1,5 @@
 from django.contrib.auth.hashers import check_password, make_password
+from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -8,7 +9,7 @@ from rest_framework.views import APIView
 from users.models import User
 from users.permissions import IsAnonymous
 from users.serializers import RegisterModelSerializer, \
-    RecoverySerializer, VerifyModelSerializer, LoginSerializer
+    RecoverySerializer, VerifyModelSerializer, LoginSerializer, TemporaryBanIpSerializer
 from users.tasks import send_recovery_mail, send_new_password
 from users.utils import RegisterUserMixin
 
@@ -54,6 +55,9 @@ class VerificationKeyApiView(RegisterUserMixin, generics.UpdateAPIView):
                                    email=kwargs['email']).first()
         if user:
             data = self.active_user(user)
+            # если есть блокировка ip удаляем
+            user_ip = request.META['REMOTE_ADDR']
+            self.delete_ip_from_temporary_ban(user_ip)
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Activation key': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
@@ -64,7 +68,31 @@ class LoginApiView(ObtainAuthToken):
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
+        user_ip = request.META['REMOTE_ADDR']
+        check_ban_serializer = TemporaryBanIpSerializer(
+            data={'ip_address': user_ip}
+        )
+        if check_ban_serializer.is_valid():
+            check_ban = check_ban_serializer.get_or_create()
+        else:
+            return Response(data={'BAD_REQUEST'}, status=status.HTTP_400_BAD_REQUEST)
+        if check_ban.status is True and check_ban.time_unblock > timezone.now():
+            return Response(data={'time': (check_ban.time_unblock - timezone.now())},
+                            status=status.HTTP_429_TOO_MANY_REQUESTS)
+        elif check_ban.status is True and check_ban.time_unblock < timezone.now():
+            check_ban.status = False
+            check_ban.save()
         serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            check_ban.attempts += 1
+            check_ban.time_unblock = timezone.now()
+            if check_ban.attempts == 3:
+                check_ban.time_unblock = timezone.now() + timezone.timedelta(minutes=60)
+                check_ban.status = True
+                check_ban.attempts = 0
+            check_ban.save()
+        else:
+            check_ban.delete()
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         data = {
@@ -122,6 +150,9 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
             user.save()
             data = self.active_user(user)
             send_new_password.delay(user.username, user.email, password)
+            # если есть блокировка ip удаляем
+            user_ip = request.META['REMOTE_ADDR']
+            self.delete_ip_from_temporary_ban(user_ip)
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Activation key': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
