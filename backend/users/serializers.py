@@ -1,10 +1,11 @@
-import re
+from django.utils import timezone
+
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
-from users.models import User
+from users.models import User, TemporaryBanIp
 
 
 class RegisterModelSerializer(serializers.ModelSerializer):
@@ -59,3 +60,24 @@ class RecoverySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email',)
+
+
+class TemporaryBanIpSerializer(serializers.ModelSerializer):
+    """Сериализатор временной блокировки пользователя"""
+
+    class Meta:
+        model = TemporaryBanIp
+        fields = ('ip_address', 'attempts', 'time_unblock', 'status')
+
+    def get_or_create(self):
+        instance, _ = TemporaryBanIp.objects.get_or_create(
+            defaults={
+                'ip_address': self.validated_data['ip_address'],
+                'time_unblock': timezone.now()
+            },
+            ip_address=self.validated_data['ip_address']
+        )
+        return instance
+
+    def delete_ip(self):
+        TemporaryBanIp.objects.filter(ip_address=self.validated_data['ip_address']).delete()

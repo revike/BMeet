@@ -42,3 +42,32 @@ class User(AbstractUser):
         db_table = "users"
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
+
+class TemporaryBanIp(models.Model):
+    """Временная блокировка при попытке подбора пароля"""
+
+    ip_address = models.GenericIPAddressField(
+         verbose_name='IP адрес',
+    )
+    attempts = models.IntegerField(
+        verbose_name='Неудачных попыток',
+        default=0,
+    )
+    time_unblock = models.DateTimeField(
+        verbose_name='Время разблокировки',
+        blank=True,
+    )
+    status = models.BooleanField(
+        verbose_name="Статус блокировки",
+        default=False
+    )
+
+    def __str__(self):
+        return f'{self.ip_address} - {self.status}'
+
+    class Meta:
+        db_table = "temporary_ban_ip"
+        verbose_name = "временная блокировка"
+        verbose_name_plural = "временная блокировка"
+
