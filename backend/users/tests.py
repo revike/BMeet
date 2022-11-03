@@ -20,6 +20,18 @@ class TestUsersApp(APITestCase):
         call_command('loaddata', 'test_db.json')
         self.client = APIClient()
 
+    def login(self, user):
+        url_login = reverse('users:login')
+        del user['username']
+        response = self.client.post(url_login, data=user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user_db = self.get_user(user['email'])
+        token_db = Token.objects.filter(user=user_db).first().key
+        token_response = response.data.get('token').split()[1]
+        self.assertEqual(token_db, token_response)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token_response}')
+        return user_db
+
     def test_register_user(self):
         """Тест регистрации нового пользователя с верными данными"""
         url = reverse('users:register')
@@ -51,17 +63,8 @@ class TestUsersApp(APITestCase):
 
     def test_login_user(self):
         """Тест входа на сайт верифицированного пользователя"""
-        url = reverse('users:login')
         user = self.user_data()
-        del user['username']
-        response = self.client.post(url, data=user)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        user_db = self.get_user(user['email'])
-        self.assertTrue(user_db.is_verify)
-        self.assertEquals(resolve(url).func.view_class, LoginApiView)
-        token_db = Token.objects.filter(user=user_db).first().key
-        token_response = response.data.get('token').split()[1]
-        self.assertEqual(token_db, token_response)
+        self.login(user)
 
     def test_login_user_no_verify(self):
         """Тест входа на сайт не верифицированного пользователя"""
@@ -143,19 +146,9 @@ class TestUsersApp(APITestCase):
 
     def test_logout(self):
         """Тест logout"""
-        url_login = reverse('users:login')
         user = self.user_data()
-        del user['username']
-        response = self.client.post(url_login, data=user)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        user_db = self.get_user(user['email'])
-        token_db = Token.objects.filter(user=user_db).first().key
-        token_response = response.data.get('token').split()[1]
-        self.assertEqual(token_db, token_response)
+        self.login(user)
         url_logout = reverse('users:logout')
-        response = self.client.get(url_logout)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token_response}')
         response = self.client.get(url_logout)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(url_logout)
