@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from users.models import User
 from users.permissions import IsAnonymous
 from users.serializers import RegisterModelSerializer, \
-    RecoverySerializer, VerifyModelSerializer, LoginSerializer, TemporaryBanIpSerializer
+    RecoverySerializer, VerifyModelSerializer, LoginSerializer, \
+    TemporaryBanIpSerializer
 from users.tasks import send_recovery_mail, send_new_password
 from users.utils import RegisterUserMixin
 
@@ -75,11 +76,15 @@ class LoginApiView(ObtainAuthToken):
         if check_ban_serializer.is_valid():
             check_ban = check_ban_serializer.get_or_create()
         else:
-            return Response(data={'BAD_REQUEST'}, status=status.HTTP_400_BAD_REQUEST)
-        if check_ban.status is True and check_ban.time_unblock > timezone.now():
-            return Response(data={'time': (check_ban.time_unblock - timezone.now())},
-                            status=status.HTTP_429_TOO_MANY_REQUESTS)
-        elif check_ban.status is True and check_ban.time_unblock < timezone.now():
+            return Response(data={'BAD_REQUEST'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if check_ban.status is True \
+                and check_ban.time_unblock > timezone.now():
+            return Response(
+                data={'time': (check_ban.time_unblock - timezone.now())},
+                status=status.HTTP_429_TOO_MANY_REQUESTS)
+        elif check_ban.status is True \
+                and check_ban.time_unblock < timezone.now():
             check_ban.status = False
             check_ban.save()
         serializer = self.get_serializer(data=request.data)
@@ -87,7 +92,8 @@ class LoginApiView(ObtainAuthToken):
             check_ban.attempts += 1
             check_ban.time_unblock = timezone.now()
             if check_ban.attempts == 3:
-                check_ban.time_unblock = timezone.now() + timezone.timedelta(minutes=60)
+                check_ban.time_unblock = timezone.now() + timezone.timedelta(
+                    minutes=60)
                 check_ban.status = True
                 check_ban.attempts = 0
             check_ban.save()
@@ -130,7 +136,8 @@ class RecoveryPasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
             user.activation_key = key
             user.save()
             send_recovery_mail.delay(user.email, key)
-            return Response(data={'email': user.email}, status=status.HTTP_200_OK)
+            return Response(data={'email': user.email},
+                            status=status.HTTP_200_OK)
         return Response(data={'Invalid': 'Email does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -145,7 +152,7 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
         user = User.objects.filter(activation_key=kwargs['activation_key'],
                                    email=kwargs['email']).first()
         if user:
-            password = self.generate_password()
+            password = User.objects.make_random_password()
             user.password = make_password(password)
             user.save()
             data = self.active_user(user)

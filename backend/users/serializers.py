@@ -80,4 +80,5 @@ class TemporaryBanIpSerializer(serializers.ModelSerializer):
         return instance
 
     def delete_ip(self):
-        TemporaryBanIp.objects.filter(ip_address=self.validated_data['ip_address']).delete()
+        TemporaryBanIp.objects.filter(
+            ip_address=self.validated_data['ip_address']).delete()
