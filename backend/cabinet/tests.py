@@ -125,15 +125,6 @@ class TestCabinetApp(APITestCase):
         }
 
     @staticmethod
-    def user_data_no_verify():
-        """Существующий не верифицированный пользователь в базе"""
-        return {
-            'username': 'user4',
-            'email': 'user4@example.com',
-            'password': 'Qwerty123!',
-        }
-
-    @staticmethod
     def get_user(email):
         """Получение пользователя из базы"""
         return User.objects.filter(email=email).first()

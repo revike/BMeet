@@ -103,6 +103,95 @@ class TestBoardApp(APITestCase):
         self.assertEqual(response_patch.data.get('group'),
                          response.data.get('group'))
 
+    def test_get_board_group(self):
+        """Тест просмотра доски приглашенным пользователем"""
+        user = self.user_verify_data()
+        self.login(user)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        board_new = self.update_board()
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url_update = reverse('board:update', kwargs={'pk': board_db.pk})
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
+        self.assertEqual(response_patch.status_code, status.HTTP_200_OK)
+        user_other = self.user_verify_data_other()
+        self.login(user_other)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    #
+    def test_update_board_group(self):
+        """Тест редактирования доски приглашенным пользователем"""
+        user = self.user_verify_data()
+        self.login(user)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        board_new = self.update_board()
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url_update = reverse('board:update', kwargs={'pk': board_db.pk})
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
+        self.assertEqual(response_patch.status_code, status.HTTP_200_OK)
+        user_other = self.user_verify_data_other()
+        self.login(user_other)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url_update = reverse('board:update', kwargs={'pk': board_db.pk})
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
+        self.assertEqual(response_patch.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_board_group(self):
+        """Тест удаления доски приглашенным пользователем у себя, но доска у других остается активная"""
+        user = self.user_verify_data()
+        self.login(user)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        board_new = self.update_board()
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url_update = reverse('board:update', kwargs={'pk': board_db.pk})
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
+        self.assertEqual(response_patch.status_code, status.HTTP_200_OK)
+        user_other = self.user_verify_data_other()
+        self.login(user_other)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url_update = reverse('board:update', kwargs={'pk': board_db.pk})
+        response_patch = self.client.patch(url_update, data=board_new,
+                                           format='json')
+        self.assertEqual(response_patch.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertNotEqual(response_patch.data.get('is_active'),
+                            response.data.get('is_active'))
+        url_update = reverse('board:delete', kwargs={'pk': board_db.pk})
+        response = self.client.delete(url_update)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        user = self.user_verify_data()
+        self.login(user)
+        board = self.created_board()
+        board_db = self.get_board(board['pk'])
+        url_board = reverse('board:board_detail', kwargs={'pk': board_db.pk})
+        response = self.client.get(url_board)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('group'),
+                         response.data.get('group'))
+
     def test_delete_board_other_user(self):
         """Тест удаления доски другим пользователем"""
         user_other = self.user_verify_data_other()
@@ -219,21 +308,7 @@ class TestBoardApp(APITestCase):
             'name': 'board',
             'description': 'desc',
             'group': [
-                3
-            ],
-            'is_active': True
-        }
-
-    @staticmethod
-    def created_board_group():
-        """Описание доски с приглашенными пользователями"""
-        return {
-            'pk': 7,
-            'author': 3,
-            'name': 'boarddd',
-            "description": "booooard",
-            'group': [
-                3, 2
+                {'email': 'user2@example.com'}
             ],
             'is_active': True
         }
@@ -247,7 +322,7 @@ class TestBoardApp(APITestCase):
             'name': 'board delete',
             'description': 'delete',
             "group": [
-                3
+                {'email': 'user2@example.com'}
             ]
         }
 
@@ -258,8 +333,8 @@ class TestBoardApp(APITestCase):
             'name': 'my_board',
             'description': 'boards',
             'group': [
-                {'email': 'user1@example.com'},
-                {'email': 'user3@example.com'}
+                {'email': 'user2@example.com'},
+                {'email': 'user1@example.com'}
             ]
         }
 
