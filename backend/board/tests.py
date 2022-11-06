@@ -1,8 +1,7 @@
+import json
 from unittest import IsolatedAsyncioTestCase
 from django.test import TestCase
 
-from channels.db import database_sync_to_async
-from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth.models import AnonymousUser
 
@@ -12,11 +11,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase, APIClient
 
-from board.consumers import BoardConsumer
 from board.routing import websockets
 from board.services import has_access, board_to_json
 from users.models import User
-from board.models import Board, BoardData, BoardDataBasket
+from board.models import Board
 
 
 class TestBoardApp(APITestCase):
@@ -327,28 +325,28 @@ class TestBoardConsumers(IsolatedAsyncioTestCase):
         self.assertEquals(subprotocol, None)
         self.assertEquals(communicator.scope['user'], self.user)
 
-    # async def test_board_consumer_add_object(self):
-    #     """Отправка нового объекта доски пользователем"""
-    #     communicator = WebsocketCommunicator(websockets, f"/api/board/{self.board.pk}/?token={self.token.key}")
-    #     connected, subprotocol = await communicator.connect()
-    #     self.assertTrue(connected)
-    #     self.assertEquals(subprotocol, None)
-    #     await communicator.send_json_to(self.get_board_object_to_add())
-    #     response = await communicator.receive_json_from()
-    #     self.assertEquals(response.content.type, "UPDATE_BOARD")
+    async def test_board_consumer_add_object(self):
+        """Отправка нового объекта доски пользователем"""
+        communicator = WebsocketCommunicator(websockets, f"/api/board/{self.board.pk}/?token={self.token.key}")
+        connected, subprotocol = await communicator.connect()
+        self.assertTrue(connected)
+        self.assertEquals(subprotocol, None)
+        await communicator.send_json_to(self.get_board_object_to_add())
+        response = await communicator.input_queue.get()
+        self.assertEquals(response['type'], 'websocket.receive')
+        self.assertEquals(response['text'], json.dumps(self.get_board_object_to_add()))
 
-
-    # @staticmethod
-    # def get_board_object_to_add():
-    #     """Возвращает объект доски"""
-    #     return {
-    #         "type": "v",
-    #          "coord": [726.9856459330143, 142.08, 34.557416267942585, 37.12],
-    #          "width": 1,
-    #          "fill_color": "#e8b0b0",
-    #          "other_data": "rect",
-    #          "stroke_color": "#cb1a1a"
-    #      }
+    @staticmethod
+    def get_board_object_to_add():
+        """Возвращает объект доски"""
+        return {
+            "type": "v",
+             "coord": [726.9856459330143, 142.08, 34.557416267942585, 37.12],
+             "width": 1,
+             "fill_color": "#e8b0b0",
+             "other_data": "rect",
+             "stroke_color": "#cb1a1a"
+         }
 
     def tearDown(self):
         if self.created_token:

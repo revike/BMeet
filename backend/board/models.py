@@ -8,7 +8,7 @@ class Board(models.Model):
     author = models.ForeignKey(
         User,
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         verbose_name='автор',
     )
     group = models.ManyToManyField(
