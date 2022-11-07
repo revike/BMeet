@@ -1,7 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 

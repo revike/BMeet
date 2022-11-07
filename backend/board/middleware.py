@@ -6,11 +6,10 @@ from channels.middleware import BaseMiddleware
 
 @database_sync_to_async
 def get_user(token_key):
-    try:
-        token = Token.objects.get(key=token_key)
+    token = Token.objects.filter(key=token_key).first()
+    if token:
         return token.user
-    except Token.DoesNotExist:
-        return AnonymousUser()
+    return AnonymousUser()
 
 
 class TokenAuthMiddleware(BaseMiddleware):
@@ -19,8 +18,12 @@ class TokenAuthMiddleware(BaseMiddleware):
 
     async def __call__(self, scope, receive, send):
         try:
-            token_key = (dict((x.split('=') for x in scope['query_string'].decode().split("&")))).get('token', None)
+            token_key = (dict((x.split('=') for x in
+                               scope['query_string'].decode().split(
+                                   "&")))).get('token', None)
         except ValueError:
             token_key = None
-        scope['user'] = AnonymousUser() if token_key is None else await get_user(token_key)
+        scope[
+            'user'] = AnonymousUser() if token_key is None else await get_user(
+            token_key)
         return await super().__call__(scope, receive, send)
