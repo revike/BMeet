@@ -380,7 +380,9 @@ class TestBoardQueries(TestCase):
 class TestBoardConsumers(IsolatedAsyncioTestCase):
 
     def setUp(self) -> None:
-        self.user, self.created_user = User.objects.get_or_create(username='admin', email='admin@admin.local')
+        self.user, self.created_user = User.objects.get_or_create(username='admin',
+                                                                  defaults={'email': 'admin@admin.local',
+                                                                            'password': 'admin'})
         self.token, self.created_token = Token.objects.get_or_create(user=self.user)
         self.board = Board.objects.create(author=self.user, name='board', description='board', is_active=True)
 
@@ -416,12 +418,12 @@ class TestBoardConsumers(IsolatedAsyncioTestCase):
         """Возвращает объект доски"""
         return {
             "type": "v",
-             "coord": [726.9856459330143, 142.08, 34.557416267942585, 37.12],
-             "width": 1,
-             "fill_color": "#e8b0b0",
-             "other_data": "rect",
-             "stroke_color": "#cb1a1a"
-         }
+            "coord": [726.9856459330143, 142.08, 34.557416267942585, 37.12],
+            "width": 1,
+            "fill_color": "#e8b0b0",
+            "other_data": "rect",
+            "stroke_color": "#cb1a1a"
+        }
 
     def tearDown(self):
         if self.created_token:
