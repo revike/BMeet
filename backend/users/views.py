@@ -138,7 +138,7 @@ class RecoveryPasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
             send_recovery_mail.delay(user.email, key)
             return Response(data={'email': user.email},
                             status=status.HTTP_200_OK)
-        return Response(data={'Invalid': 'Email does not exist'},
+        return Response(data={'Invalid': 'Аккаунт не существует'},
                         status=status.HTTP_400_BAD_REQUEST)
 
 
