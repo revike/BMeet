@@ -16,3 +16,4 @@ gunicorn.service
 gunicorn.socket
 celerybeat-schedule
 static_back/
+/db.log
