@@ -199,7 +199,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 # Documentation API
 BASE_URL_DOCUMENTATION_API = env('BASE_URL_DOCUMENTATION_API')
 
-
 # DataBase log in file db.log
 if env('DB_LOG') == 'true':
     LOGGING = {
@@ -213,9 +212,9 @@ if env('DB_LOG') == 'true':
             },
         },
         'loggers': {
-                'django.db.backends': {
-                    'level': 'DEBUG',
-                    'handlers': ['file']
+            'django.db.backends': {
+                'level': 'DEBUG',
+                'handlers': ['file']
             },
         },
     }
