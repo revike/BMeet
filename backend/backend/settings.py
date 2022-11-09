@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from environ import Env
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 env = Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +27,7 @@ Env.read_env(os.path.join(BASE_DIR, '../.env'))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if env('ENV_TYPE') == 'local' else False
 
 ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(' ')
 CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS').split(' ')
@@ -198,20 +200,45 @@ CELERY_RESULT_SERIALIZER = 'json'
 BASE_URL_DOCUMENTATION_API = env('BASE_URL_DOCUMENTATION_API')
 
 
-# #лог базы данных в консоль
-# if DEBUG:
-#     LOGGING = {
-#         'version': 1,
-#         'disable_existing_loggers': False,
-#         'handlers': {
-#             'console': {
-#                 'class': 'logging.StreamHandler',
-#             },
-#         },
-#         'loggers': {
-#             'django.db.backends': {
-#                 'level': 'DEBUG',
-#                 'handlers': ['console']
-#             }
-#         }
-#     }
+# DataBase log in file db.log
+if env('DB_LOG') == 'true':
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(BASE_DIR, '../db.log'),
+            },
+        },
+        'loggers': {
+                'django.db.backends': {
+                    'level': 'DEBUG',
+                    'handlers': ['file']
+            },
+        },
+    }
+
+# Sentry
+if env('SENTRY_DSN') != 'https://examplePublicKey@o0.ingest.sentry.io/0':
+    sentry_sdk.init(
+        dsn=env('SENTRY_DSN'),
+        integrations=[
+            DjangoIntegration(),
+        ],
+
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )
+
+# superuser
+ADMIN_LOGIN = env('LOGIN')
+ADMIN_EMAIL = env('EMAIL')
+ADMIN_PASSWORD = env('PASSWORD')
