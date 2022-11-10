@@ -6,12 +6,12 @@ from rest_framework.response import Response
 
 from cabinet.serializers import UserSerializer
 from cabinet.tasks import send_update_mail
-from cabinet.utils import username_check, password_check
 from users.models import User
 from users.utils import RegisterUserMixin
+from cabinet.utils import username_check, password_check
 
 
-class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
+class UserUpdateDeleteApiView(RegisterUserMixin, generics.RetrieveUpdateDestroyAPIView):
     """Редактирование профиля пользователя"""
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
@@ -63,6 +63,10 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         return serializer
 
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
+
 
 class UpdateEmailApiView(generics.UpdateAPIView):
     """Изменение email"""
@@ -80,3 +84,4 @@ class UpdateEmailApiView(generics.UpdateAPIView):
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Update email': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
