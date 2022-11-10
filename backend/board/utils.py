@@ -51,10 +51,3 @@ class AddUserBoardMixin:
                 send_mail_add_group.delay(email, board_id)
                 NoRegisterUser.objects.create(board=board, email=email)
 
-
-def inactive_user_author_board(user):
-    """Все доски автором которых является пользователь user сделать неактивными"""
-    boards = Board.objects.filter(author=user, is_active=True)
-    for obj in boards:
-        obj.is_active = False
-        obj.save()

@@ -4,7 +4,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from board.utils import inactive_user_author_board
 from cabinet.serializers import UserSerializer
 from cabinet.tasks import send_update_mail
 from users.models import User
@@ -65,7 +64,6 @@ class UserUpdateDeleteApiView(RegisterUserMixin, generics.RetrieveUpdateDestroyA
         return serializer
 
     def perform_destroy(self, instance):
-        inactive_user_author_board(instance)
         instance.is_active = False
         instance.save()
 
@@ -86,3 +84,4 @@ class UpdateEmailApiView(generics.UpdateAPIView):
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Update email': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
