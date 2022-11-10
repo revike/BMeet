@@ -4,14 +4,15 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
+from board.utils import inactive_user_author_board
 from cabinet.serializers import UserSerializer
 from cabinet.tasks import send_update_mail
-from cabinet.utils import username_check, password_check
 from users.models import User
 from users.utils import RegisterUserMixin
+from cabinet.utils import username_check, password_check
 
 
-class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
+class UserUpdateDeleteApiView(RegisterUserMixin, generics.RetrieveUpdateDestroyAPIView):
     """Редактирование профиля пользователя"""
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
@@ -62,6 +63,11 @@ class UserUpdateApiView(RegisterUserMixin, generics.RetrieveUpdateAPIView):
                                            data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         return serializer
+
+    def perform_destroy(self, instance):
+        inactive_user_author_board(instance)
+        instance.is_active = False
+        instance.save()
 
 
 class UpdateEmailApiView(generics.UpdateAPIView):
