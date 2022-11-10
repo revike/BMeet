@@ -1,0 +1,95 @@
+version: "3.3"
+
+services:
+  celery:
+    restart: always
+    container_name: celery
+    image: bmeet_web
+    env_file:
+      - .env
+    command: bash -c "cd backend && celery -A backend worker -l info && cd .."
+    volumes:
+      - celery_data:/var/lib/celery/data
+      - .:/code
+    depends_on:
+      - web
+      - redis
+
+  celery_beat:
+    restart: always
+    container_name: celery_beat
+    image: bmeet_web
+    env_file:
+      - .env
+    command: bash -c "cd backend && celery -A backend beat -l info && cd .."
+    volumes:
+      - celery_data:/var/lib/celery_beat/data
+      - .:/code
+    depends_on:
+      - web
+      - redis
+
+  redis:
+    image: redis:5
+    container_name: bmeet_redis
+    volumes:
+      - redis_data:/var/lib/redis/data
+    ports:
+      - 6379:6379
+
+  db:
+    image: postgres:14.5
+    container_name: bmeet_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bmeet_web
+    container_name: bmeet_web
+    volumes:
+      - .:/code
+    command: ./docker_commands.sh
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    container_name: frontend
+    depends_on:
+      - web
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+      - frontend
+    volumes:
+      - ./nginx:/etc/nginx/templates
+      - ./backend/static_back:/usr/share/nginx/html/static_back
+
+volumes:
+  pg_data:
+  redis_data:
+  celery_data:
+  celery_beat:
