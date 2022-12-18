@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from users.validators import username_validate, password_validate
@@ -27,6 +28,10 @@ class User(AbstractUser):
     email = LowercaseEmailField(
         unique=True,
     )
+    phone_number_regex = RegexValidator(regex=r"^\+7\d{10,10}$",
+                                        message='number error')
+    phone = models.CharField(validators=[phone_number_regex], max_length=12,
+                             unique=True, verbose_name='телефон')
     activation_key = models.CharField(
         max_length=128,
         blank=True,
@@ -48,7 +53,7 @@ class TemporaryBanIp(models.Model):
     """Временная блокировка при попытке подбора пароля"""
 
     ip_address = models.GenericIPAddressField(
-         verbose_name='IP адрес',
+        verbose_name='IP адрес',
     )
     attempts = models.IntegerField(
         verbose_name='Неудачных попыток',
@@ -70,4 +75,3 @@ class TemporaryBanIp(models.Model):
         db_table = "temporary_ban_ip"
         verbose_name = "временная блокировка"
         verbose_name_plural = "временная блокировка"
-

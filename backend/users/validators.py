@@ -1,3 +1,5 @@
+import re
+
 from django.core.exceptions import ValidationError
 
 from cabinet.utils import username_check, password_check
@@ -18,3 +20,13 @@ def password_validate(value):
         raise ValidationError(
             'Пароль не удовлетворяет условиям безопасности',
             params={'value': value})
+
+
+def validate_user_phone(value):
+    """Валидация phone"""
+    pattern = r'^[\+]|\d{10,12}$'
+    if re.search(pattern, value):
+        if value[:1] == '8' or value[:2] == '+7' or len(value) == 10:
+            code = '+7'
+            value = f'{code}{value[-10:]}'
+    return value
