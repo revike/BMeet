@@ -31,7 +31,7 @@ class User(AbstractUser):
     phone_number_regex = RegexValidator(regex=r"^\+7\d{10,10}$",
                                         message='number error')
     phone = models.CharField(validators=[phone_number_regex], max_length=12,
-                             unique=True, verbose_name='телефон')
+                             unique=True, null=True, blank=True, verbose_name='телефон')
     activation_key = models.CharField(
         max_length=128,
         blank=True,
