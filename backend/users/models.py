@@ -31,7 +31,8 @@ class User(AbstractUser):
     phone_number_regex = RegexValidator(regex=r"^\+7\d{10,10}$",
                                         message='number error')
     phone = models.CharField(validators=[phone_number_regex], max_length=12,
-                             unique=True, null=True, blank=True, verbose_name='телефон')
+                             unique=True, null=True, blank=True,
+                             verbose_name='телефон')
     activation_key = models.CharField(
         max_length=128,
         blank=True,
@@ -39,6 +40,11 @@ class User(AbstractUser):
     is_verify = models.BooleanField(
         default=False, verbose_name='верифицирован'
     )
+
+    def save(self, *args, **kwargs):
+        if not self.phone:
+            self.phone = None
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.username} - {self.email}'
