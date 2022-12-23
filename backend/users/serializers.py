@@ -14,7 +14,7 @@ class RegisterModelSerializer(serializers.ModelSerializer):
     """Сериализатор регистрации"""
     phone_number_regex = RegexValidator(regex=r"^[\+]|\d{10,12}$",
                                         message='number error')
-    phone = serializers.CharField(max_length=12,
+    phone = serializers.CharField(max_length=12, required=False,
                                   validators=[phone_number_regex])
 
     class Meta:
