@@ -1,18 +1,25 @@
+from abc import ABC
+
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils import timezone
-from rest_framework import generics, status
+from requests import HTTPError
+from rest_framework import generics, status, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from backend.settings import GOOGLE_REDIRECT_URI
 from users.models import User
 from users.permissions import IsAnonymous
 from users.serializers import RegisterModelSerializer, \
     RecoverySerializer, VerifyModelSerializer, LoginSerializer, \
     TemporaryBanIpSerializer
 from users.tasks import send_recovery_mail, send_new_password
-from users.utils import RegisterUserMixin
+from users.utils import RegisterUserMixin, google_get_access_token, \
+    google_get_user_info
 
 
 class RegisterApiView(RegisterUserMixin, generics.CreateAPIView):
@@ -163,3 +170,41 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Activation key': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GoogleLoginApi(APIView, RegisterUserMixin):
+    permission_classes = (IsAnonymous,)
+
+    def post(self, request, *args, **kwargs):
+        access_token = request.data.get('access_token')
+        if not access_token:
+            return Response(data=request.data,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        user_data = google_get_user_info(access_token=access_token)
+
+        data = {
+            'email': user_data['email'],
+            'first_name': user_data.get('given_name', ''),
+            'last_name': user_data.get('family_name', ''),
+            'username': user_data.get('given_name', '')
+        }
+
+        user = User.objects.filter(email=data['email']).first()
+        if user:
+            if not user.is_verify:
+                user.is_verify = True
+                user.save()
+        else:
+            user = User.objects.create(email=data['email'],
+                                       username=data['username'],
+                                       first_name=data['first_name'],
+                                       last_name=data['last_name'],
+                                       is_verify=True)
+            user.save()
+        # если есть блокировка ip удаляем
+        user_ip = request.META['REMOTE_ADDR']
+        self.delete_ip_from_temporary_ban(user_ip)
+        token, created = Token.objects.get_or_create(user=user)
+        data['token'] = f'Token {token.key}'
+        return Response(data=data, status=status.HTTP_200_OK)

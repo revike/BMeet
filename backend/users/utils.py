@@ -1,10 +1,13 @@
 import hashlib
+import requests
 from random import random
-
+from rest_framework.exceptions import ValidationError
 from board.models import NoRegisterUser, Board
 from users.serializers import TemporaryBanIpSerializer
 from users.tasks import send_verify_mail, set_hash_password
 from rest_framework.authtoken.models import Token
+
+GOOGLE_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
 
 
 class RegisterUserMixin:
@@ -62,3 +65,16 @@ class RegisterUserMixin:
         )
         if update_ban_serializer.is_valid():
             update_ban_serializer.delete_ip()
+
+
+def google_get_user_info(access_token):
+    """Запорс данных пользователя у Google"""
+    response = requests.get(
+        GOOGLE_USER_INFO_URL,
+        params={'access_token': access_token}
+    )
+
+    if not response.ok:
+        raise ValidationError('Failed to obtain user info from Google.')
+
+    return response.json()
