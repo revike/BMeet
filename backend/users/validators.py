@@ -29,4 +29,8 @@ def validate_user_phone(value):
         if value[:1] == '8' or value[:2] == '+7' or len(value) == 10:
             code = '+7'
             value = f'{code}{value[-10:]}'
+    else:
+        raise ValidationError(
+            'Неверный формат номера',
+            params={'value': value})
     return value

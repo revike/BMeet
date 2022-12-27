@@ -11,7 +11,8 @@ from users.utils import RegisterUserMixin
 from cabinet.utils import username_check, password_check
 
 
-class UserUpdateDeleteApiView(RegisterUserMixin, generics.RetrieveUpdateDestroyAPIView):
+class UserUpdateDeleteApiView(RegisterUserMixin,
+                              generics.RetrieveUpdateDestroyAPIView):
     """Редактирование профиля пользователя"""
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
@@ -31,6 +32,8 @@ class UserUpdateDeleteApiView(RegisterUserMixin, generics.RetrieveUpdateDestroyA
                 'first_name') if 'first_name' in data else user.first_name,
             'last_name': data.get(
                 'last_name') if 'last_name' in data else user.last_name,
+            'phone': data.get(
+                'phone') if 'phone' in data else user.phone,
         }
 
         def update_token(request_user):
@@ -84,4 +87,3 @@ class UpdateEmailApiView(generics.UpdateAPIView):
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Update email': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-
