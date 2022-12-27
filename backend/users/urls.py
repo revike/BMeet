@@ -2,7 +2,8 @@ from django.urls import path
 
 from users.views import RegisterApiView, VerificationKeyApiView, \
     LogoutApiView, RecoveryPasswordApiView, \
-    GeneratePasswordApiView, ResendApiView, LoginApiView, GoogleLoginApi
+    GeneratePasswordApiView, ResendApiView, LoginApiView, GoogleLoginApi, \
+    VkLoginApiView
 
 app_name = 'users'
 
@@ -18,5 +19,5 @@ urlpatterns = [
     path('recovery/<email>/<activation_key>/',
          GeneratePasswordApiView.as_view(), name='recovery'),
     path('social/google/', GoogleLoginApi.as_view(), name='google'),
-
+    path('social/vk/', VkLoginApiView.as_view(), name='vk'),
 ]
