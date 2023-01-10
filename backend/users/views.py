@@ -1,18 +1,24 @@
+from abc import ABC
+
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils import timezone
-from rest_framework import generics, status
+from requests import HTTPError
+from rest_framework import generics, status, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from backend.settings import GOOGLE_REDIRECT_URI
 from users.models import User
 from users.permissions import IsAnonymous
 from users.serializers import RegisterModelSerializer, \
     RecoverySerializer, VerifyModelSerializer, LoginSerializer, \
     TemporaryBanIpSerializer
 from users.tasks import send_recovery_mail, send_new_password
-from users.utils import RegisterUserMixin, google_get_user_info
+from users.utils import RegisterUserMixin
 
 
 class RegisterApiView(RegisterUserMixin, generics.CreateAPIView):
