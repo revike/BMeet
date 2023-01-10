@@ -1,17 +1,10 @@
-from abc import ABC
-
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils import timezone
-from requests import HTTPError
 from rest_framework import generics, status, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from backend.settings import GOOGLE_REDIRECT_URI
 from users.models import User
 from users.permissions import IsAnonymous
 from users.serializers import RegisterModelSerializer, \
@@ -180,7 +173,7 @@ class GoogleLoginApi(APIView, RegisterUserMixin):
             return Response(data=request.data,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        user_data = google_get_user_info(access_token=access_token)
+        user_data = self.get_user_social(access_token=access_token)
 
         data = {
             'email': user_data['email'],
@@ -207,3 +200,44 @@ class GoogleLoginApi(APIView, RegisterUserMixin):
         token, created = Token.objects.get_or_create(user=user)
         data['token'] = f'Token {token.key}'
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+class VkLoginApiView(APIView, RegisterUserMixin):
+    """Авторизация с помощью vk"""
+    permission_classes = (IsAnonymous,)
+
+    def __init__(self):
+        super().__init__()
+        self.url_vk = 'https://api.vk.com/method/users.get'
+
+    def post(self, request):
+        access_token = request.data.get('access_token')
+        email = request.data.get('email')
+
+        if not access_token or not email:
+            return Response(data=request.data,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        params = {
+            'access_token': access_token,
+            'uids': request.data.get('user_id'),
+            'v': '5.131',
+            'fields': ''
+        }
+        user_data = self.get_user_social(self.url_vk, params)['response'][0]
+
+        data = {
+            'email': email,
+            'first_name': user_data.get('first_name', ''),
+            'last_name': user_data.get('last_name', ''),
+            'username': f"{user_data.get('id')}_vk",
+            'is_verify': True,
+            'is_active': True,
+        }
+
+        user, data = self.create_user(email, data)
+
+        user_ip = request.META['REMOTE_ADDR']
+        self.delete_ip_from_temporary_ban(user_ip)
+        data = self.add_token(user, data)
+        return Response(data=data, status=status.HTTP_201_CREATED)
