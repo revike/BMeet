@@ -167,13 +167,18 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
 class GoogleLoginApi(APIView, RegisterUserMixin):
     permission_classes = (IsAnonymous,)
 
+    def __init__(self):
+        super().__init__()
+        self.url_google = 'https://www.googleapis.com/oauth2/v3/userinfo'
+
     def post(self, request, *args, **kwargs):
         access_token = request.data.get('access_token')
         if not access_token:
             return Response(data=request.data,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        user_data = self.get_user_social(access_token=access_token)
+        params = {'access_token': access_token}
+        user_data = self.get_user_social(self.url_google, params)
 
         data = {
             'email': user_data['email'],
