@@ -24,9 +24,22 @@ def password_validate(value):
 
 def validate_user_phone(value):
     """Валидация phone"""
+    is_phone, value = format_phone(value)
+    if is_phone:
+        return value
+    else:
+        raise ValidationError(
+            'Неверный формат номера',
+            params={'value': value})
+
+
+def format_phone(value):
+    """Приведение номера телефона к формату +7"""
     pattern = r'^[\+]|\d{10,12}$'
+    is_phone = False
     if re.search(pattern, value):
+        is_phone = True
         if value[:1] == '8' or value[:2] == '+7' or len(value) == 10:
             code = '+7'
             value = f'{code}{value[-10:]}'
-    return value
+    return is_phone, value

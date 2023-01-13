@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from users.models import User, TemporaryBanIp
-from users.validators import validate_user_phone
+from users.validators import validate_user_phone, format_phone
 
 
 class RegisterModelSerializer(serializers.ModelSerializer):
@@ -31,6 +31,9 @@ class RegisterModelSerializer(serializers.ModelSerializer):
     @staticmethod
     def validate_phone(value):
         phone = validate_user_phone(value)
+        if User.objects.filter(phone=phone).exists():
+            msg = _("A user with that phone already exists.")
+            raise serializers.ValidationError(msg, code="parse_error")
         return phone
 
 
@@ -43,7 +46,7 @@ class LoginSerializer(AuthTokenSerializer):
     username = ...
 
     def validate(self, attrs):
-        email = validate_user_phone(attrs.get('email'))
+        is_phone, email = format_phone(attrs.get('email'))
         password = attrs.get('password')
 
         if email and password:

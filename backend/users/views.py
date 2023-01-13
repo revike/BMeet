@@ -1,11 +1,10 @@
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils import timezone
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from users.models import User
 from users.permissions import IsAnonymous
 from users.serializers import RegisterModelSerializer, \
@@ -166,18 +165,18 @@ class GeneratePasswordApiView(RegisterUserMixin, generics.UpdateAPIView):
 
 
 class GoogleLoginApi(APIView, RegisterUserMixin):
-    """Авторизация с помощью Google"""
     permission_classes = (IsAnonymous,)
 
     def __init__(self):
         super().__init__()
         self.url_google = 'https://www.googleapis.com/oauth2/v3/userinfo'
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         access_token = request.data.get('access_token')
         if not access_token:
             return Response(data=request.data,
                             status=status.HTTP_400_BAD_REQUEST)
+
         params = {'access_token': access_token}
         user_data = self.get_user_social(self.url_google, params)
 
@@ -185,19 +184,27 @@ class GoogleLoginApi(APIView, RegisterUserMixin):
             'email': user_data['email'],
             'first_name': user_data.get('given_name', ''),
             'last_name': user_data.get('family_name', ''),
-            'username': f"{user_data.get('given_name', '')}_google",
-            'is_verify': True,
-            'is_active': True,
+            'username': user_data.get('given_name', '')
         }
 
-        email = data['email']
-
-        user = self.create_user(email, data)
-
+        user = User.objects.filter(email=data['email']).first()
+        if user:
+            if not user.is_verify:
+                user.is_verify = True
+                user.save()
+        else:
+            user = User.objects.create(email=data['email'],
+                                       username=data['username'],
+                                       first_name=data['first_name'],
+                                       last_name=data['last_name'],
+                                       is_verify=True)
+            user.save()
+        # если есть блокировка ip удаляем
         user_ip = request.META['REMOTE_ADDR']
         self.delete_ip_from_temporary_ban(user_ip)
-        data = self.add_token(user, data)
-        return Response(data=data, status=status.HTTP_201_CREATED)
+        token, created = Token.objects.get_or_create(user=user)
+        data['token'] = f'Token {token.key}'
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
 class VkLoginApiView(APIView, RegisterUserMixin):

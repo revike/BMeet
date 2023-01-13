@@ -9,9 +9,11 @@ from cabinet.tasks import send_update_mail
 from users.models import User
 from users.utils import RegisterUserMixin
 from cabinet.utils import username_check, password_check
+from users.validators import format_phone
 
 
-class UserUpdateDeleteApiView(RegisterUserMixin, generics.RetrieveUpdateDestroyAPIView):
+class UserUpdateDeleteApiView(RegisterUserMixin,
+                              generics.RetrieveUpdateDestroyAPIView):
     """Редактирование профиля пользователя"""
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
@@ -32,6 +34,12 @@ class UserUpdateDeleteApiView(RegisterUserMixin, generics.RetrieveUpdateDestroyA
             'last_name': data.get(
                 'last_name') if 'last_name' in data else user.last_name,
         }
+        if data.get('phone'):
+            is_correct_phone, phone = format_phone(data.get('phone'))
+            print(phone)
+            if phone != user.phone:
+                new_data['phone'] = phone
+
 
         def update_token(request_user):
             """Обновление токена"""
@@ -84,4 +92,3 @@ class UpdateEmailApiView(generics.UpdateAPIView):
             return Response(data=data, status=status.HTTP_200_OK)
         data = {'Update email': 'Invalid key'}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-
