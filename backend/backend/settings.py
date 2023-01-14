@@ -32,6 +32,17 @@ DEBUG = True if env('ENV_TYPE') == 'local' else False
 ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(' ')
 CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS').split(' ')
 
+# CORSHEADERS
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = env('CORS_ALLOWED_ORIGINS').split(' ')
+CORS_ALLOW_HEADERS = (
+    '*',
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Credentials',
+)
+
 # Application definition
 
 INSTALLED_APPS = [
