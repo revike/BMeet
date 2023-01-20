@@ -229,7 +229,7 @@ class VkLoginApiView(APIView, RegisterUserMixin):
             'v': '5.131',
             'fields': ''
         }
-        user_data = self.get_user_social(self.url_vk, params)['response'][0]
+        user_data = self.get_user_social(self.url_vk, params)
 
         data = {
             'email': email,
