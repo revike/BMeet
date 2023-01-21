@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from board.models import Board, BoardData
+from board.models import Board, BoardData, BoardMessage
 
 
 class InlineBoardData(admin.StackedInline):
@@ -18,4 +18,11 @@ class BoardAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created', 'updated',)
 
 
+class BoardMessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user_id', 'datetime',)
+    list_display_links = ('id', 'user_id', 'datetime',)
+    list_filter = ('datetime',)
+
+
 admin.site.register(Board, BoardAdmin)
+admin.site.register(BoardMessage, BoardMessageAdmin)
