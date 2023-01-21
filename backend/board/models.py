@@ -156,6 +156,7 @@ class BoardDataBasket(models.Model):
 
 class BoardMessage(models.Model):
     """Сообщения чата доски"""
+    objects = None
     board = models.ForeignKey(Board, on_delete=models.CASCADE,
                               verbose_name='доска')
     user_id = models.ForeignKey(User, on_delete=models.CASCADE,

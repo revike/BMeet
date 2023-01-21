@@ -50,4 +50,3 @@ class AddUserBoardMixin:
             for email in result_email_no_register:
                 send_mail_add_group.delay(email, board_id)
                 NoRegisterUser.objects.create(board=board, email=email)
-

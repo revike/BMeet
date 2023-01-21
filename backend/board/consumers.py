@@ -1,6 +1,7 @@
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from .services import board_to_json, add_board_obj, undo, redo, has_access, delete_board_data_basket_objects, \
+from .services import board_to_json, add_board_obj, undo, redo, has_access, \
+    delete_board_data_basket_objects, \
     delete_redo_objects
 
 
@@ -100,8 +101,13 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
                 self.group_name,
                 {
                     "type": "send_board_objects",
-                    "content": {"type": "ADD_OBJECT",
-                                "data": {"objects": [board_obj],  "undo_object": undo_obj}},
+                    "content": {
+                        "type": "ADD_OBJECT",
+                        "data": {
+                            "objects": [board_obj],
+                            "undo_object": undo_obj
+                        }
+                    },
                 },
             )
 

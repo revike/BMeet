@@ -1,15 +1,9 @@
+from datetime import datetime
+
 from rest_framework import serializers
 
-from board.models import BoardData, Board, NoRegisterUser
+from board.models import BoardData, Board, NoRegisterUser, BoardMessage
 from users.models import User
-
-
-class BoardDataSerializer(serializers.ModelSerializer):
-    """Сериализатор данных доски"""
-
-    class Meta:
-        model = BoardData
-        fields = '__all__'
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -18,7 +12,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email',)
+        fields = ('username', 'email',)
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -39,9 +33,54 @@ class BoardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = '__all__'
+        fields = (
+            'name', 'description', 'is_active', 'created', 'updated', 'author',
+            'group', 'group_no_register',)
 
-    def get_group_no_register(self, board):
+    @classmethod
+    def get_group_no_register(cls, board):
         """Получение незарегистрированных email"""
-        return [{'email': i.email} for i in
-                NoRegisterUser.objects.filter(board=board)]
+        no_register_users = NoRegisterUser.objects.filter(board=board)
+        return [{'email': i.email} for i in no_register_users]
+
+
+class BoardDataSerializer(serializers.ModelSerializer):
+    """Сериализатор данных доски"""
+    author = AuthorSerializer(required=False)
+    group = GroupSerializer(many=True, required=False)
+    group_no_register = serializers.SerializerMethodField()
+    chat = serializers.SerializerMethodField()
+    data_board = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Board
+        fields = (
+            'name', 'description', 'is_active', 'created', 'updated', 'author',
+            'group', 'group_no_register', 'chat', 'data_board')
+
+    @classmethod
+    def get_group_no_register(cls, board):
+        """Получение незарегистрированных email"""
+        no_register_users = NoRegisterUser.objects.filter(board=board)
+        return [{'email': i.email} for i in no_register_users]
+
+    @classmethod
+    def get_chat(cls, board):
+        chat = BoardMessage.objects.filter(board=board)
+        return [
+            {
+                'user_id': i.user_id.id,
+                'username': i.user_id.username,
+                'message': i.message,
+                'datetime': datetime.strftime(i.datetime, '%Y-%m-%d %H:%M:%S')
+            } for i in chat
+        ]
+
+    @classmethod
+    def get_data_board(cls, board):
+        data_board = BoardData.objects.filter(board=board)
+        return [
+            {
+                'data': i.data
+            } for i in data_board
+        ]
