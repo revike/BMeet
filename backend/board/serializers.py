@@ -33,9 +33,8 @@ class BoardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = (
-            'name', 'description', 'is_active', 'created', 'updated', 'author',
-            'group', 'group_no_register',)
+        fields = ('id', 'name', 'description', 'is_active', 'created',
+                  'updated', 'author', 'group', 'group_no_register',)
 
     @classmethod
     def get_group_no_register(cls, board):
