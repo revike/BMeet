@@ -154,6 +154,25 @@ class BoardDataBasket(models.Model):
         verbose_name_plural = 'Удаленные объекты'
 
 
+class BoardMessage(models.Model):
+    """Сообщения чата доски"""
+    objects = None
+    board = models.ForeignKey(Board, on_delete=models.CASCADE,
+                              verbose_name='доска')
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE,
+                                verbose_name='пользователь')
+    message = models.TextField(verbose_name='сообщение')
+    datetime = models.DateTimeField(auto_now_add=True, verbose_name='создано')
+
+    def __str__(self):
+        return f'{self.message}'
+
+    class Meta:
+        db_table = 'board_message'
+        verbose_name = 'Сообщение чата доски'
+        verbose_name_plural = 'Сообщения чата доски'
+
+
 class NoRegisterUser(models.Model):
     """Незарегистрированные приглашенные пользователи"""
     board = models.ForeignKey('Board', on_delete=models.CASCADE, null=True,

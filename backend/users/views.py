@@ -1,6 +1,6 @@
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils import timezone
-from rest_framework import generics, status, serializers
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
@@ -116,7 +116,8 @@ class LoginApiView(ObtainAuthToken):
 class LogoutApiView(APIView):
     """Logout"""
 
-    def get(self, request):
+    @classmethod
+    def get(cls, request):
         request.user.auth_token.delete()
         return Response(data={'user': 'logout'}, status=status.HTTP_200_OK)
 
@@ -171,7 +172,7 @@ class GoogleLoginApi(APIView, RegisterUserMixin):
         super().__init__()
         self.url_google = 'https://www.googleapis.com/oauth2/v3/userinfo'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         access_token = request.data.get('access_token')
         if not access_token:
             return Response(data=request.data,
@@ -235,7 +236,7 @@ class VkLoginApiView(APIView, RegisterUserMixin):
             'email': email,
             'first_name': user_data.get('first_name', ''),
             'last_name': user_data.get('last_name', ''),
-            'username': f"{user_data.get('id')}_vk",
+            'username': f"{user_data.get('user_id')}_vk",
             'is_verify': True,
             'is_active': True,
         }
