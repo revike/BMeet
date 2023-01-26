@@ -13,7 +13,6 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         self.delete_obj_basket = True
 
     async def connect(self):
-        print(f'receive_count = {self.channel_layer.receive_count};')
         try:
             self.board_id = self.scope["url_route"]["kwargs"]["board_id"]
             self.user = self.scope['user']
