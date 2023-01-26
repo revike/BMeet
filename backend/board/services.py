@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Board, BoardData, BoardDataBasket
+from .models import Board, BoardData, BoardDataBasket, BoardMessage
 
 
 def has_access(board_id, user):
@@ -115,3 +115,8 @@ def delete_redo_objects(board_id, user):
     BoardDataBasket.objects.select_related('user_update').filter(
         user_update=user, board_id=board_id,
         type_object_action='r').delete()
+
+
+def clear_chat_from_database(board_id):
+    """Удаление сообщений из чата"""
+    BoardMessage.objects.filter(board_id=board_id).delete()

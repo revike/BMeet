@@ -2,7 +2,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from .services import board_to_json, add_board_obj, undo, redo, has_access, \
     delete_board_data_basket_objects, \
-    delete_redo_objects
+    delete_redo_objects, clear_chat_from_database
 
 
 class BoardConsumer(AsyncJsonWebsocketConsumer):
@@ -13,6 +13,7 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
         self.delete_obj_basket = True
 
     async def connect(self):
+        print(f'receive_count = {self.channel_layer.receive_count};')
         try:
             self.board_id = self.scope["url_route"]["kwargs"]["board_id"]
             self.user = self.scope['user']
@@ -82,6 +83,11 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
     def delete_redo_objects(self):
         delete_redo_objects(self.board_id, self.user)
 
+    @database_sync_to_async
+    def clear_chat_board(self):
+        """Удаление сообщений из чата"""
+        clear_chat_from_database(self.board_id)
+
     async def send_board_objects(self, event):
         await self.send_json(event['content'])
 
@@ -112,5 +118,8 @@ class BoardConsumer(AsyncJsonWebsocketConsumer):
             )
 
     async def disconnect(self, code):
+        self.channel_layer.receive_count -= 1
+        if self.channel_layer.receive_count < 1:
+            await self.clear_chat_board()
         if self.delete_obj_basket:
             await self.delete_board_data_basket_objects()
