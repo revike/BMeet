@@ -30,6 +30,7 @@ class BoardSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(required=False)
     group = GroupSerializer(many=True, required=False)
     group_no_register = serializers.SerializerMethodField()
+    is_active = serializers.BooleanField(required=False, default=True)
 
     class Meta:
         model = Board
