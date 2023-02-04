@@ -16,4 +16,5 @@ gunicorn.service
 gunicorn.socket
 celerybeat-schedule
 static_back/
+media_back/
 /db.log

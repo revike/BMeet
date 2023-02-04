@@ -1,8 +1,18 @@
+import os
+
+from PIL import Image
 from django.core.validators import RegexValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from backend.settings import MEDIA_URL
 from users.validators import username_validate, password_validate
 from django.utils.translation import gettext_lazy as _
+
+
+def upload_to(instance, filename=''):
+    """Путь хранения аватарок"""
+    return ''.join([f'images/user_avatars/{instance.username}/', filename])
 
 
 class LowercaseEmailField(models.EmailField):
@@ -38,6 +48,8 @@ class User(AbstractUser):
                              max_length=12,
                              unique=True, null=True, blank=True,
                              verbose_name='телефон')
+    user_photo = models.ImageField(upload_to=upload_to, blank=True,
+                                   null=True, verbose_name='аватарка')
     activation_key = models.CharField(
         max_length=128,
         blank=True,
@@ -49,7 +61,21 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.phone:
             self.phone = None
-        return super().save(*args, **kwargs)
+        save_user = super().save(*args, **kwargs)
+        path = f'{MEDIA_URL}{upload_to(self)}'
+        self.update_photo(path)
+        return save_user
+
+    @staticmethod
+    def update_photo(path, fixed_width=300):
+        photos = os.listdir(path)
+        for photo in photos:
+            img = Image.open(f'{path}{photo}')
+            width_percent = (fixed_width / float(img.size[0]))
+            # img.size[0] - квадратная фотка (кривая)
+            height_size = int((float(img.size[1]) * float(width_percent)))
+            new_image = img.resize((fixed_width, height_size))
+            new_image.save(f'{path}{photo}')
 
     def __str__(self):
         return f'{self.username} - {self.email}'

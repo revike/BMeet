@@ -110,7 +110,7 @@
 
 * Клонируем репозиторий с Frontend
 
-[Frontend repository](https://github.com/NatalyaMamicheva/BMeet.git)
+[Frontend repository](https://gitlab.com/nikdestrave/bmeet)
 
 * Переименовываем клонированную директорию с фронтом BMeet на frontend
 

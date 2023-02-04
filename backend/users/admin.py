@@ -9,7 +9,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'username', 'email', 'first_name', 'last_name')
     fields = ('id', 'username', 'email', 'phone', 'first_name', 'last_name',
               'activation_key', 'is_active', 'is_verify', 'is_staff',
-              'is_superuser', 'date_joined',)
+              'is_superuser', 'date_joined', 'user_photo',)
     readonly_fields = ('id', 'date_joined',)
 
 

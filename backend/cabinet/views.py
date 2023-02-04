@@ -1,12 +1,15 @@
+import os
+
 from django.contrib.auth.hashers import make_password
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
+from backend.settings import MEDIA_URL
 from cabinet.serializers import UserSerializer
 from cabinet.tasks import send_update_mail
-from users.models import User
+from users.models import User, upload_to
 from users.utils import RegisterUserMixin
 from cabinet.utils import username_check, password_check
 from users.validators import format_phone
@@ -26,6 +29,7 @@ class UserUpdateDeleteApiView(RegisterUserMixin,
     def update(self, request, *args, **kwargs):
         data = request.data
         user = request.user
+
         new_data = {
             'username': data.get(
                 'username') if 'username' in data else user.username,
@@ -34,12 +38,19 @@ class UserUpdateDeleteApiView(RegisterUserMixin,
             'last_name': data.get(
                 'last_name') if 'last_name' in data else user.last_name,
         }
+
+        photo = data.get('user_photo')
+        if photo:
+            self.remove_photo_user(user)
+            new_data['user_photo'] = photo
+        elif photo is not None:
+            self.remove_photo_user(user)
+            new_data['user_photo'] = None
+
         if data.get('phone'):
             is_correct_phone, phone = format_phone(data.get('phone'))
-            print(phone)
             if phone != user.phone:
                 new_data['phone'] = phone
-
 
         def update_token(request_user):
             """Обновление токена"""
@@ -70,6 +81,19 @@ class UserUpdateDeleteApiView(RegisterUserMixin,
                                            data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         return serializer
+
+    @staticmethod
+    def remove_photo_user(user):
+        try:
+            os.remove(f'{MEDIA_URL}{user.user_photo}')
+        except (PermissionError, FileNotFoundError, IsADirectoryError):
+            ...
+        finally:
+            user_dir = f'{MEDIA_URL}{upload_to(user)}'
+            try:
+                [os.remove(f'{user_dir}{i}') for i in os.listdir(user_dir)]
+            except (FileNotFoundError, IsADirectoryError):
+                ...
 
     def perform_destroy(self, instance):
         instance.is_active = False
