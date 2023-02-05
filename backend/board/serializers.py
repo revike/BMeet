@@ -9,6 +9,7 @@ from users.models import User
 class GroupSerializer(serializers.ModelSerializer):
     """Сериализатор группы пользователей"""
     email = serializers.EmailField(required=False)
+    username = serializers.CharField(required=False)
 
     class Meta:
         model = User
