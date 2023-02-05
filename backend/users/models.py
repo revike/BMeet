@@ -68,14 +68,17 @@ class User(AbstractUser):
 
     @staticmethod
     def update_photo(path, fixed_width=300):
-        photos = os.listdir(path)
-        for photo in photos:
-            img = Image.open(f'{path}{photo}')
-            width_percent = (fixed_width / float(img.size[0]))
-            # img.size[0] - квадратная фотка (кривая)
-            height_size = int((float(img.size[1]) * float(width_percent)))
-            new_image = img.resize((fixed_width, height_size))
-            new_image.save(f'{path}{photo}')
+        try:
+            photos = os.listdir(path)
+            for photo in photos:
+                img = Image.open(f'{path}{photo}')
+                width_percent = (fixed_width / float(img.size[0]))
+                # img.size[0] - квадратная фотка (кривая)
+                height_size = int((float(img.size[1]) * float(width_percent)))
+                new_image = img.resize((fixed_width, height_size))
+                new_image.save(f'{path}{photo}')
+        except FileNotFoundError:
+            ...
 
     def __str__(self):
         return f'{self.username} - {self.email}'
