@@ -12,7 +12,7 @@ class UserSerializer(RegisterModelSerializer):
         model = User
         fields = (
             'username', 'email', 'first_name', 'phone',
-            'last_name', 'password', 'token'
+            'last_name', 'password', 'token', 'user_photo'
         )
 
     @classmethod
