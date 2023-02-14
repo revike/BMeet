@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-from users.models import User, TemporaryBanIp, FriendsRequest
+from users.models import User, TemporaryBanIp, FriendRequest
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -20,15 +20,16 @@ class TemporaryBanIpAdmin(admin.ModelAdmin):
     search_fields = ('ip_address',)
 
 
-class FriendsRequestAdmin(admin.ModelAdmin):
+class FriendRequestAdmin(admin.ModelAdmin):
     list_display = ('from_user', 'to_user', 'created')
     fields = (
         'from_user', 'to_user', 'created', 'message', 'is_active', 'is_except'
     )
+    readonly_fields = ('created',)
 
 
 admin.site.register(User, UserAdmin)
 admin.site.register(TemporaryBanIp, TemporaryBanIpAdmin)
-admin.site.register(FriendsRequest, FriendsRequestAdmin)
+admin.site.register(FriendRequest, FriendRequestAdmin)
 admin.site.unregister(Group)
 admin.site.site_header = 'Админ-панель BMeet'

@@ -35,12 +35,10 @@ class User(AbstractUser):
         _("password"), max_length=128,
         validators=[password_validate],
     )
-
     friends = models.ManyToManyField(
         "User", blank=True,
         verbose_name='друзья'
     )
-
     email = LowercaseEmailField(
         unique=True,
     )
@@ -124,16 +122,16 @@ class TemporaryBanIp(models.Model):
         verbose_name_plural = "временная блокировка"
 
 
-class FriendsRequest(models.Model):
+class FriendRequest(models.Model):
     """Заявка в друзья"""
 
     from_user = models.ForeignKey(
-        User, related_name="от_кого",
+        User, related_name="from_user",
         on_delete=models.CASCADE,
         verbose_name='от кого',
     )
     to_user = models.ForeignKey(
-        User, related_name="кому",
+        User, related_name="to_user",
         on_delete=models.CASCADE,
         verbose_name='кому',
     )
@@ -154,6 +152,6 @@ class FriendsRequest(models.Model):
     )
 
     class Meta:
-        db_table = "friends_request"
+        db_table = "friend_request"
         verbose_name = "запрос в друзья"
         verbose_name_plural = "запрос в друзья"
