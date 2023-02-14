@@ -25,9 +25,17 @@ def board_to_json(board_id, user_id):
     redo_object = objects.filter(type_object_action='r').order_by('id').first()
     undo_object = objects.filter(type_object_action='u').order_by(
         '-id').first()
+    chats = BoardMessage.objects.filter(board_id=board_id)
+    chat_data = [{
+        'user_id': chat.user_id.id,
+        'user_name': chat.user_id.username,
+        'message': chat.message,
+        'datetime': chat.datetime.strftime('%Y-%m-%d %H:%M:%S')
+    } for chat in chats]
     return {"objects": [board_obj_to_json(obj) for obj in board_data],
             "redo_object": board_obj_to_json(redo_object),
             "undo_object": board_obj_to_json(undo_object),
+            'chat': chat_data
             }
 
 
@@ -44,7 +52,7 @@ def board_obj_to_json(board_obj):
 def add_board_obj_basket(board_obj, type_object_action):
     """Добавление объекта доски в BardDataBasket"""
     obj = BoardDataBasket(
-        board_id=board_obj.board_id,
+        board_id=board_obj.board.id,
         type_object=board_obj.type_object,
         data=board_obj.data,
         user_update=board_obj.user_update,
@@ -56,7 +64,10 @@ def add_board_obj_basket(board_obj, type_object_action):
 
 
 def add_board_obj(board_id, object_data, user_id):
-    """Добавление объекта доски в BardData"""
+    """
+    Добавление объекта доски в BardData
+    TODO: Сделать принятие данных чата
+    """
     object_data = {**object_data}
     type_object = object_data.pop("type")
     obj = BoardData(
@@ -66,8 +77,8 @@ def add_board_obj(board_id, object_data, user_id):
         user_update=user_id,
     )
     obj.save()
-    undo_obj = add_board_obj_basket(board_obj=obj, type_object_action='u')
-    undo_obj = board_obj_to_json(undo_obj)
+    undo_data = add_board_obj_basket(board_obj=obj, type_object_action='u')
+    undo_obj = board_obj_to_json(undo_data)
     obj = board_obj_to_json(obj)
     return obj, undo_obj
 
