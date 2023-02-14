@@ -35,6 +35,12 @@ class User(AbstractUser):
         _("password"), max_length=128,
         validators=[password_validate],
     )
+
+    friends = models.ManyToManyField(
+        "User", blank=True,
+        verbose_name='друзья'
+    )
+
     email = LowercaseEmailField(
         unique=True,
     )
@@ -50,6 +56,7 @@ class User(AbstractUser):
                              verbose_name='телефон')
     user_photo = models.ImageField(upload_to=upload_to, blank=True,
                                    null=True, verbose_name='аватарка')
+
     activation_key = models.CharField(
         max_length=128,
         blank=True,
@@ -115,3 +122,38 @@ class TemporaryBanIp(models.Model):
         db_table = "temporary_ban_ip"
         verbose_name = "временная блокировка"
         verbose_name_plural = "временная блокировка"
+
+
+class FriendsRequest(models.Model):
+    """Заявка в друзья"""
+
+    from_user = models.ForeignKey(
+        User, related_name="от_кого",
+        on_delete=models.CASCADE,
+        verbose_name='от кого',
+    )
+    to_user = models.ForeignKey(
+        User, related_name="кому",
+        on_delete=models.CASCADE,
+        verbose_name='кому',
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='создана заявка',
+    )
+    message = models.TextField(
+        verbose_name='сообщение',
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='заявка',
+    )
+    is_except = models.BooleanField(
+        default=True,
+        verbose_name='принята заявка',
+    )
+
+    class Meta:
+        db_table = "friends_request"
+        verbose_name = "запрос в друзья"
+        verbose_name_plural = "запрос в друзья"
